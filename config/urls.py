@@ -16,12 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('habits/', views.habit_list, name='habit_list'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('export/csv/', views.export_csv, name='export_csv'),
+    path('export/pdf/', views.export_pdf, name='export_pdf'),
 ]
 
-def home(request):
-    return HttpResponse("<h1>Welcome to habitpy.me!</h1>")
+#def home(request):
+#    return HttpResponse("<h1>Welcome to habitpy.me!</h1>")
+
+
