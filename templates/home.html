@@ -6,83 +6,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>habitpy.me - Your daily habits tracker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            height: 100vh;
-        }
-        .left-side {
-            width: 50%;
-            background: url('{% static "images/homepage.png" %}') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
-        .left-side h1 {
-            font-size: 48px;
-        }
-        .left-side p {
-            font-size: 18px;
-            margin: 20px 0;
-        }
-        .left-side a {
-            background-color: #006699;
-            color: #fff;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .right-side {
-            width: 50%;
-            background: linear-gradient(to bottom, #00cc99, #006699);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 20px;
-            padding-top: 40px;
-            text-align: center;
-        }
-        .logo {
-            margin-bottom: 20px;
-        }
-        .logo img {
-            width: 100px;
-        }
-        .logo h1 {
-            color: #fff;
-            font-size: 32px;
-            margin: 10px 0;
-        }
-        .logo p {
-            color: #fff;
-            font-size: 18px;
-            margin: 0;
-        }
-        .tab {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            max-width: 400px;
-        }
-        .tab button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 10px;
-            width: 50%;
-            color: #fff;
-        }
-        
-        .tab button.active {
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+}
+.left-side {
+    width: 50%;
+    background: url('{% static "images/homepage.png" %}') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+.left-side h1 {
+    font-size: 48px;
+}
+.left-side p {
+    font-size: 18px;
+    margin: 20px 0;
+}
+.left-side a {
+    background-color: #006699;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.right-side {
+    width: 50%;
+    background: linear-gradient(to bottom, #00cc99, #006699);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    padding-top: 40px;
+    text-align: center;
+}
+.logo {
+    margin-bottom: 20px;
+}
+.logo img {
+    width: 100px;
+}
+.logo h1 {
+    color: #fff;
+    font-size: 32px;
+    margin: 10px 0;
+}
+.logo p {
+    color: #fff;
+    font-size: 18px;
+    margin: 0;
+}
+.tab {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+}
+.tab button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px;
+    width: 50%;
+    color: #fff;
+}
+.tab button.active {
     border-bottom: 2px solid #00cc99;
 }
 .form-container {
@@ -131,7 +130,7 @@ input[type="submit"]:hover {
 .remember-forgot label {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px;
     color: #fff;
 }
 .remember-forgot input[type="checkbox"] {
@@ -141,7 +140,7 @@ input[type="submit"]:hover {
     color: #fff;
     cursor: pointer;
     text-decoration: underline;
-    font-size: 14px;
+    font-size: 12px;
 }
 .modal {
     display: none;
@@ -185,26 +184,27 @@ input[type="submit"]:hover {
     <div>
         <h1>Not a member?</h1>
         <p>
-habitpy.me is a platform that helps you to achieve your daily goals - to become the best version of yourself.
-<br>
-Join us and let's see where your progress will lead you!
-</p>
-<br>
-<a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')">Create an Account</a>
-</div>
+            habitpy.me is a platform that helps you to achieve your daily goals - to become the best version of yourself.
+            <br>
+            Join us and let's see where your progress will lead you!
+        </p>
+        <br>
+        <a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')">Create an Account</a>
+    </div>
 </div>
 <div class="right-side">
     <div class="logo">
         <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 90%; height: 60%;">
-        <p>Your daily habits tracker</p>
+<p>Your daily habits tracker</p>
     </div>
     <div class="tab">
         <button class="tablink active" onclick="openTab(event, 'log-in')">LOG IN</button>
         <button class="tablink" onclick="openTab(event, 'sign-up')">SIGN UP</button>
     </div>
     <div class="form-container">
-        <form id="log-in" class="active">
-            <input type="text" name="email" placeholder="e-mail">
+        <form id="log-in" action="{% url 'login' %}" method="post" class="active">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="e-mail or username">
             <input type="password" name="password" placeholder="password">
             <input type="submit" value="LOG IN">
             <div class="remember-forgot">
@@ -212,10 +212,11 @@ Join us and let's see where your progress will lead you!
                 <span class="forgot-password" onclick="openForgotPasswordModal()">Forgot password?</span>
             </div>
         </form>
-        <form id="sign-up">
-            <input type="text" name="name" placeholder="name" id="sign-up-name">
+        <form id="sign-up" action="{% url 'signup' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="name" id="sign-up-name">
             <input type="text" name="email" placeholder="e-mail">
-            <input type="password" name="password" placeholder="password">
+            <input type="password" name="password1" placeholder="password">
             <input type="password" name="password2" placeholder="repeat password">
             <input type="submit" value="SIGN UP">
         </form>
