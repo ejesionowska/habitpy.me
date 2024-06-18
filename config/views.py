@@ -6,6 +6,9 @@ from .models import Completion
 from .forms import HabitForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import SignUpForm, LoginForm
 
 
 def home(request):
@@ -28,7 +31,7 @@ def habit_list(request):
                     habit.save()
                     return redirect('habit_list')
             else:
-                return render(request, 'habits.html', {'habits': habits, 'message': 'Pracujesz już nad maksymalną ilością nawyków.'})
+                return render(request, 'habits.html', {'habits': habits, 'message': "You're already working on the maximum number of habits."})
         elif 'edit_habit' in request.POST:
             habit_id = request.POST.get('habit_id')
             habit = Habit.objects.get(id=habit_id)
@@ -116,3 +119,31 @@ def export_pdf(request):
 
     p.save()
     return response
+
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
