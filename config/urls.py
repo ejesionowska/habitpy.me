@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from . import views
+from .views import signup_view, login_view, logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,9 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('export/csv/', views.export_csv, name='export_csv'),
     path('export/pdf/', views.export_pdf, name='export_pdf'),
+    path('signup/', signup_view, name='signup'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
 ]
 
 #def home(request):
