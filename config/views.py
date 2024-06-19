@@ -1,3 +1,5 @@
+#views.py 1501
+
 import csv
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -9,6 +11,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm, LoginForm
 from django.utils.dateformat import DateFormat
+from django.http import JsonResponse
+
 
 def home(request):
     return render(request, 'home.html')
@@ -45,6 +49,8 @@ def habit_list(request):
     return render(request, 'habits.html', {'habits': habits, 'form': form})
 
 
+
+
 @login_required
 def dashboard(request):
     user = request.user
@@ -67,17 +73,28 @@ def dashboard(request):
                 selected_habit = None
 
         if 'completion_count' in request.POST and selected_habit and selected_date:
-            completion_count = int(request.POST.get('completion_count', 0))
+            try:
+                completion_count = int(request.POST.get('completion_count', 0))
+            except ValueError:
+                completion_count = 0
             completion, created = Completion.objects.update_or_create(
                 habit=selected_habit, added=selected_date,
                 defaults={'completion_count': completion_count}
             )
 
     if selected_habit:
-        completions = Completion.objects.filter(habit=selected_habit, added__month=selected_date.month)
+        selected_month_date = datetime.strptime(selected_month, '%Y-%m').date()
+        completions_qs = Completion.objects.filter(
+            habit=selected_habit,
+            added__year=selected_month_date.year,
+            added__month=selected_month_date.month
+        )
+        completions_dict = {completion.added.day: completion.completion_count for completion in completions_qs}
+        days_in_month = (selected_month_date.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+        completions = [{'day': day, 'count': completions_dict.get(day, 0)} for day in range(1, days_in_month.day + 1)]
 
     selected_date_formatted = DateFormat(selected_date).format('F j, Y')
-    completion_form = CompletionForm(initial={'habit': selected_habit, 'completion_count': 0})
+    completion_form = CompletionForm(initial={'habit': selected_habit})
 
     context = {
         'habits': habits,
@@ -90,6 +107,7 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
+
 
 
 def export_csv(request):
