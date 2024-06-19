@@ -1,20 +1,17 @@
 import csv
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Habit
-from .models import Completion
-from .forms import HabitForm
+from .models import Habit, Completion
+from .forms import HabitForm, CompletionForm
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm, LoginForm
-
+from django.utils.dateformat import DateFormat
 
 def home(request):
     return render(request, 'home.html')
-
-
 
 @login_required
 def habit_list(request):
@@ -54,20 +51,42 @@ def dashboard(request):
     habits = Habit.objects.filter(user=user)
     selected_habit = habits.first() if habits.exists() else None
     selected_date = datetime.now().date()
-    completions = Completion.objects.filter(habit__user=user, added=selected_date)
+    selected_month = selected_date.strftime('%Y-%m')
+    completions = []
 
     if request.method == 'POST':
-        selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
+        if 'selected_date' in request.POST and request.POST.get('selected_date'):
+            selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
+        if 'selected_month' in request.POST and request.POST.get('selected_month'):
+            selected_month = request.POST.get('selected_month')
         habit_id = request.POST.get('habit_id')
-        selected_habit = Habit.objects.get(id=habit_id)
-        completions = Completion.objects.filter(habit=selected_habit, added__month=selected_date.month,
-                                                added__year=selected_date.year)
+        if habit_id:
+            try:
+                selected_habit = Habit.objects.get(id=habit_id, user=user)
+            except Habit.DoesNotExist:
+                selected_habit = None
+
+        if 'completion_count' in request.POST and selected_habit and selected_date:
+            completion_count = int(request.POST.get('completion_count', 0))
+            completion, created = Completion.objects.update_or_create(
+                habit=selected_habit, added=selected_date,
+                defaults={'completion_count': completion_count}
+            )
+
+    if selected_habit:
+        completions = Completion.objects.filter(habit=selected_habit, added__month=selected_date.month)
+
+    selected_date_formatted = DateFormat(selected_date).format('F j, Y')
+    completion_form = CompletionForm(initial={'habit': selected_habit, 'completion_count': 0})
 
     context = {
         'habits': habits,
         'selected_habit': selected_habit,
         'selected_date': selected_date,
+        'selected_date_formatted': selected_date_formatted,
+        'selected_month': selected_month,
         'completions': completions,
+        'completion_form': completion_form,
     }
 
     return render(request, 'dashboard.html', context)
@@ -90,7 +109,6 @@ def export_csv(request):
     return response
 
 def export_pdf(request):
-    # Import necessary libraries
     from django.http import HttpResponse
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
@@ -119,8 +137,6 @@ def export_pdf(request):
 
     p.save()
     return response
-
-
 
 def signup_view(request):
     if request.method == 'POST':

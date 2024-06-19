@@ -1,19 +1,29 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 
 class Habit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    goal = models.IntegerField()
-    unit = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
+    goal = models.PositiveIntegerField()
+    unit = models.CharField(max_length=20, choices=[
+        ('sekundy', 'Sekundy'),
+        ('minuty', 'Minuty'),
+        ('godziny', 'Godziny'),
+        ('powtórzenia', 'Powtórzenia'),
+        ('metry', 'Metry'),
+        ('kilometry', 'Kilometry'),
+        ('mile', 'Mile'),
+        ('inne', 'Inne')
+    ])
 
     def __str__(self):
         return self.name
 
 class Completion(models.Model):
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
-    completion_count = models.IntegerField()
-    added = models.DateTimeField(auto_now_add=True)
+    added = models.DateField()
+    completion_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.habit.name} - {self.completion_count}"
+        return f"{self.habit.name} - {self.added}"

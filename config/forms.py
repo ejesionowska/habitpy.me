@@ -1,5 +1,5 @@
 from django import forms
-from .models import Habit
+from .models import Habit, Completion
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
@@ -22,6 +22,11 @@ class HabitForm(forms.ModelForm):
             ])
         }
 
+
+class CompletionForm(forms.ModelForm):
+    class Meta:
+        model = Completion
+        fields = ['habit', 'completion_count']
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
