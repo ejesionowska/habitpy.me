@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -18,6 +19,15 @@
             max-height: 100%; /* Ensure the canvas doesn't exceed the container */
             width: 90%; /* Ensure the canvas takes most of the container's width */
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -26,9 +36,12 @@
             <div class="logo">
                 <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 35%; height: 5%;">
             </div>
-            <a href="{% url 'habit_list' %}" class="edit-link">Add or Edit</a>
-            <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
-            <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
+            <div class="buttons">
+                <a href="{% url 'habit_list' %}" class="edit-link">Add or Edit</a>
+                <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
+                <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
+                <a href="{% url 'logout' %}" class="logout-button">Log Out</a> <!-- Add this line -->
+            </div>
         </div>
         <div class="content">
             <div class="left-panel">
