@@ -12,6 +12,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm, LoginForm
 from django.utils.dateformat import DateFormat
 from django.http import JsonResponse
+from django.contrib.auth import logout
+from django.http import JsonResponse
+from .models import City
+
 
 
 def home(request):
@@ -181,3 +185,19 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+
+
+cities = ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok", "Rzeszów", "Kalisz", "Katowice"]
+
+def autocomplete(request):
+    if 'term' in request.GET:
+        qs = cities
+        q = request.GET.get('term')
+        qs = [city for city in cities if city.lower().startswith(q.lower())]
+        return JsonResponse(qs, safe=False)
+    return JsonResponse([], safe=False)
+
+def home(request):
+    return render(request, 'home.html')
