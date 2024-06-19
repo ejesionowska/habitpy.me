@@ -6,6 +6,19 @@
     <title>Your Habits</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 47vh; /* Adjusting to 47% of the viewport height */
+            width: 100%; /* Make sure the container takes full width */
+        }
+        canvas {
+            max-height: 100%; /* Ensure the canvas doesn't exceed the container */
+            width: 90%; /* Ensure the canvas takes most of the container's width */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -60,8 +73,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('habitChart').getContext('2d');
         const completionData = {{ completions|safe }};
-        const labels = completionData.map(item => item.day);
+        const labels = Array.from({ length: completionData.length }, (_, i) => i + 1);
         const data = completionData.map(item => item.count);
+        const maxValue = Math.max(...data, 200); // Use 200 if all values are zero
 
         const habitChart = new Chart(ctx, {
             type: 'bar',
@@ -70,20 +84,35 @@
                 datasets: [{
                     label: '{{ selected_habit.name }}',
                     data: data,
-                    borderColor: 'rgba(0, 255, 0, 1)',
-                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                    backgroundColor: '#00cc99', // Solid color with no transparency
+                    borderColor: '#00FF00', // Border color
+                    borderWidth: 0.25 // Border thickness
                 }]
             },
             options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff', // Change legend text to white
+                            font: {
+                                size: 14 // Increase the legend font size by 2px
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 200
+                        suggestedMax: maxValue,
+                        ticks: {
+                            color: '#ffffff', // Change y-axis numbers to white
+                        }
                     },
                     x: {
                         ticks: {
+                            color: '#ffffff', // Change x-axis numbers to white
                             callback: function(value, index, values) {
-                                return value; // display the day of the month
+                                return index + 1; // display the day of the month starting from 1
                             }
                         }
                     }
