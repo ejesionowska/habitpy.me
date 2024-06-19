@@ -5,7 +5,47 @@
     <meta charset="UTF-8">
     <title>Your Habits</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items at the top */
+            height: 100vh;
+            margin: 0;
+            padding-top: 20px; /* Reduce padding at the top */
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            margin-top: 0; /* Remove margin at the top to move content up */
+        }
+
+        .ear-left, .ear-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 150px; /* Increase the width of the ears */
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .ear-left {
+            left: 0;
+            background-image: url("{% static 'images/left_habits.png' %}");
+        }
+
+        .ear-right {
+            right: 0;
+            background-image: url("{% static 'images/right_habits.png' %}");
+        }
+
         .modal ul {
             list-style: none;
             padding: 0;
@@ -23,73 +63,136 @@
             background-color: #f0f0f0;
         }
         
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            padding: 10px; /* Reduce padding */
+        }
         
-                
         .header .logo {
             display: inline-block;
             vertical-align: middle;
-            margin-right: 20px;
+            margin-right: 300px; /* Space between logo and buttons */
         }
 
         .header .logo img {
-            width: 50px;
+            width: 200px; /* Keep the logo size */
             height: auto;
         }
 
-        .header .nav-links {
-            display: inline-block;
-            vertical-align: middle;
+        .header .buttons {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+            justify-content: space-between; /* Distribute buttons and input evenly */
         }
 
-        .header .nav-links button {
-            margin-left: 10px;
+        .content {
+            text-align: center; /* Center the content */
+            width: 100%;
+        }
+
+        .table-container {
+            width: 66%; /* Reduce the width by one-third */
+            margin: 0 auto;
+            margin-top: 10px; /* Add a bit of space above the table */
+        }
+
+        table {
+             width: 100%; /* Make the table take full width of the container */
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table th {
+            background-color: #006699; /* Set header background color */
+            color: white; /* Set header text color to white */
+            text-align: center; /* Center align header text */
+        }
+
+        table td {
+            background-color: white; /* Set cell background color to white */
+            color: black; /* Set cell text color to black */
+        }
+
+        .text-left {
+            text-align: left; /* Left align text */
+        }
+
+        .text-center {
+            text-align: center; /* Center align text */
+        }
+
+        .header-title {
+            text-align: center;
+            margin: 10px 0; /* Reduce the margin */
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <body>
+    <div class="ear-left"></div>
     <div class="container">
         <div class="header">
-            
-            <a href="{% url 'dashboard' %}">main dashboard</a>
-            <button onclick="document.getElementById('addModal').style.display='block'">add a habit</button>
-            <button onclick="document.getElementById('editModal').style.display='block'">modify a habit</button>
-            <button onclick="document.getElementById('deleteModal').style.display='block'">delete a habit</button>
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="habitpy.me">
+            </div>
+            <div class="buttons">
+                <input type="text" id="city-search" placeholder="Type a city name...">
+                <button onclick="document.getElementById('addModal').style.display='block'">Add a Habit</button>
+                <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
+                <button onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+                <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
+                <a href="{% url 'logout' %}" class="button-link">Log Out</a>
+            </div>
+        </div>
+        <div class="header-title">
+            <h1>Your Habits</h1>
         </div>
         <div class="content">
-            <h1>YOUR HABITS</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Habit</th>
-                        <th>Daily Goal</th>
-                        <th>Unit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for habit in habits %}
-                    <tr>
-                        <td>{{ habit.name }}</td>
-                        <td>{{ habit.goal }}</td>
-                        <td>{{ habit.unit }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Habit</th>
+                            <th>Daily Goal</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for habit in habits %}
+                        <tr>
+                            <td class="text-left">{{ habit.name }}</td>
+                            <td class="text-center">{{ habit.goal }}</td>
+                            <td class="text-left">{{ habit.unit }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% if message %}
                 <p>{{ message }}</p>
             {% endif %}
         </div>
     </div>
+    <div class="ear-right"></div>
 
-        <!-- Modals -->
+    <!-- Modals -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
-            <h2>add a habit</h2>
+            <h2>Add a Habit</h2>
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" name="add_habit">add</button>
+                <button type="submit" name="add_habit">Add</button>
             </form>
         </div>
     </div>
@@ -97,7 +200,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
-            <h2>Select a habit to edit</h2>
+            <h2>Select a Habit to Edit</h2>
             <ul>
                 {% for habit in habits %}
                 <li onclick="closeModalAndOpenEditForm({{ habit.id }}, '{{ habit.name }}', {{ habit.goal }}, '{{ habit.unit }}')">{{ habit.name }}</li>
@@ -109,7 +212,7 @@
     <div id="editFormModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('editFormModal').style.display='none'">&times;</span>
-            <h2>MODIFY A HABIT</h2>
+            <h2>Modify a Habit</h2>
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="editHabitId">
@@ -119,7 +222,7 @@
                 <input type="number" name="goal" id="editHabitGoal" max="999999">
                 <label for="unit">Unit</label>
                 <input type="text" name="unit" id="editHabitUnit">
-                <button type="submit" name="edit_habit">MODIFY</button>
+                <button type="submit" name="edit_habit">Modify</button>
             </form>
         </div>
     </div>
@@ -127,7 +230,7 @@
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('deleteModal').style.display='none'">&times;</span>
-            <h2>Select a habit to delete</h2>
+            <h2>Select a Habit to Delete</h2>
             <ul>
                 {% for habit in habits %}
                 <li onclick="closeModalAndOpenDeleteForm({{ habit.id }}, '{{ habit.name }}')">{{ habit.name }}</li>
@@ -139,19 +242,36 @@
     <div id="deleteFormModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('deleteFormModal').style.display='none'">&times;</span>
-            <h2>DELETE A HABIT</h2>
+            <h2>Delete a Habit</h2>
             <p id="deleteHabitName"></p>
             <p>Are you sure you want to delete this habit?</p>
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="deleteHabitId">
-                <button type="button" onclick="document.getElementById('deleteFormModal').style.display='none'">NO</button>
-                <button type="submit" name="delete_habit">YES</button>
+                <button type="button" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
+                <button type="submit" name="delete_habit">Yes</button>
             </form>
         </div>
     </div>
 
     <script>
+        $(document).ready(function() {
+            $("#city-search").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'autocomplete' %}",
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+            });
+        });
+
         function closeModalAndOpenEditForm(id, name, goal, unit) {
             document.getElementById('editModal').style.display = 'none';
             openEditForm(id, name, goal, unit);
@@ -176,7 +296,7 @@
             document.getElementById('deleteFormModal').style.display = 'block';
         }
 
-        // Zamknij modal po kliknięciu na szare tło
+        // Close modal on clicking gray background
         window.onclick = function(event) {
             var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
             modals.forEach(function(modalId) {
