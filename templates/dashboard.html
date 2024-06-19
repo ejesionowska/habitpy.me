@@ -10,23 +10,23 @@
 <body>
     <div class="container">
         <div class="header">
-                    <div class="logo">
-            <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 50%; height: 20%;">
-        </div>
-             <a href="{% url 'habit_list' %}" class="edit-link">edit & add</a>
-             <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
-             <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 50%; height: 20%;">
+            </div>
+            <a href="{% url 'habit_list' %}" class="edit-link">Add or Edit</a>
+            <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
+            <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
         </div>
         <div class="content">
             <div class="left-panel">
                 <form method="POST">
                     {% csrf_token %}
                     <label for="month">Month:</label>
-                    <input type="month" id="month" name="selected_date" value="{{ selected_date|date:'Y-m' }}" onchange="this.form.submit()">
+                    <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="this.form.submit()">
                 </form>
                 <ul class="habit-list">
                     {% for habit in habits %}
-                    <li><a href="#" onclick="document.getElementById('habit_id').value={{ habit.id }}; document.getElementById('habit_form').submit();">{{ habit.name }}</a></li>
+                    <li><a href="#" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">{{ habit.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -43,10 +43,11 @@
                     </div>
                     <div class="form-group">
                         <label for="completion_count">Completion:</label>
-                        <input type="number" id="completion_count" name="completion_count" value="{% if selected_habit and completions %}{{ completions.first.completion_count }}{% endif %}">
+                        <input type="number" id="completion_count" name="completion_count" value="{% if selected_habit and completions %}{{ completions.first.completion_count }}{% else %}0{% endif %}">
                     </div>
                     <button type="submit">Save</button>
                 </form>
+                <p>Selected Date: {{ selected_date_formatted }}</p>
             </div>
         </div>
         <div class="bottom-panel">
@@ -55,33 +56,56 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const ctx = document.getElementById('habitChart').getContext('2d');
-        const habitChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: Array.from({ length: new Date({{ selected_date|date:'Y' }}, {{ selected_date|date:'m' }}, 0).getDate() }, (_, i) => i + 1),
-                datasets: [{
-                    label: '{{ selected_habit.name }}',
-                    data: [
-                        {% for completion in completions %}
-                            {{ completion.completion_count }},
-                        {% endfor %}
-                    ],
-                    borderColor: 'rgba(0, 255, 0, 1)',
-                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 200
-                    }
+<script>
+    const ctx = document.getElementById('habitChart').getContext('2d');
+    const habitChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({ length: new Date("{{ selected_month|date:'Y' }}", "{{ selected_month|date:'m' }}", 0).getDate() }, (_, i) => i + 1),
+            datasets: [{
+                label: '{{ selected_habit.name }}',
+                data: [
+                    {% for completion in completions %}
+                        {{ completion.completion_count }},
+                    {% endfor %}
+                ],
+                borderColor: 'rgba(0, 255, 0, 1)',
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 200
                 }
             }
-        });
-    </script>
+        }
+    });
+
+    // Function to handle form submission
+    function submitForm() {
+        document.getElementById('habit_form').submit();
+    }
+
+    // Function to handle habit selection
+    function selectHabit(element) {
+        event.preventDefault();
+        const habitId = element.dataset.habitId;
+        document.getElementById('habit_id').value = habitId;
+        submitForm();
+    }
+
+    // Automatically submit the form when month is changed
+    document.getElementById('month').addEventListener('change', function() {
+        this.form.submit();
+    });
+
+    // Automatically submit the form when date is changed
+    document.getElementById('date').addEventListener('change', function() {
+        this.form.submit();
+    });
+</script>
+
 </body>
 </html>
