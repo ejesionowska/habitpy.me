@@ -19,6 +19,8 @@ from django.urls import path
 from django.urls import include
 from . import views
 from .views import signup_view, login_view, logout_view
+from django.contrib.auth import views as auth_views
+from .views import autocomplete
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +32,12 @@ urlpatterns = [
     path('signup/', signup_view, name='signup'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('', views.home, name='home'),
+    path('autocomplete/', views.autocomplete, name='autocomplete'),
 ]
+
+
+
 
 #def home(request):
 #    return HttpResponse("<h1>Welcome to habitpy.me!</h1>")
