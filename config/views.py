@@ -54,7 +54,6 @@ def habit_list(request):
 
 
 
-
 @login_required
 def dashboard(request):
     user = request.user
@@ -69,8 +68,8 @@ def dashboard(request):
             selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
         if 'selected_month' in request.POST and request.POST.get('selected_month'):
             selected_month = request.POST.get('selected_month')
-        habit_id = request.POST.get('habit_id')
-        if habit_id:
+        if 'habit_id' in request.POST and request.POST.get('habit_id'):
+            habit_id = request.POST.get('habit_id')
             try:
                 selected_habit = Habit.objects.get(id=habit_id, user=user)
             except Habit.DoesNotExist:
@@ -81,7 +80,7 @@ def dashboard(request):
                 completion_count = int(request.POST.get('completion_count', 0))
             except ValueError:
                 completion_count = 0
-            completion, created = Completion.objects.update_or_create(
+            Completion.objects.update_or_create(
                 habit=selected_habit, added=selected_date,
                 defaults={'completion_count': completion_count}
             )
@@ -111,7 +110,6 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
-
 
 
 def export_csv(request):

@@ -1,4 +1,3 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +27,39 @@
             display: flex;
             gap: 10px;
         }
+
+        .selected-habit {
+            background-color: #006699; /* Kolor niebieski */
+            color: white; /* Biała czcionka */
+            border: 1px solid white; /* Biała krawędź */
+        }
+
+        .habit-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .habit-list li {
+            border-radius: 25px; /* Bardziej półokrągłe */
+            padding: 5px 10px; /* Dodanie odstępu */
+            margin-bottom: 5px; /* Odstęp między elementami listy */
+            cursor: pointer;
+            background-color: white; /* Białe tło dla niewybranego elementu */
+            color: black; /* Czarna czcionka */
+            border: 1px solid #ccc; /* Szara krawędź */
+            flex: 1 1 calc(50% - 20px); /* Dwa elementy na rząd z odstępem */
+            text-align: center; /* Wyśrodkowanie tekstu */
+            font-size: 14px; /* Mniejsza czcionka */
+            box-sizing: border-box; /* Uwzględnij padding i border w szerokości elementu */
+        }
+
+        .habit-list li:hover {
+            background-color: #f0f0f0; /* Jasnoszare tło przy najechaniu */
+            color: black; /* Czarna czcionka */
+        }
     </style>
 </head>
 <body>
@@ -40,7 +72,7 @@
                 <a href="{% url 'habit_list' %}" class="edit-link">Add or Edit</a>
                 <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
                 <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
-                <a href="{% url 'logout' %}" class="logout-button">Log Out</a> <!-- Add this line -->
+                <a href="{% url 'logout' %}" class="logout-button">Log Out</a>
             </div>
         </div>
         <div class="content">
@@ -52,7 +84,9 @@
                 </form>
                 <ul class="habit-list">
                     {% for habit in habits %}
-                    <li><a href="#" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">{{ habit.name }}</a></li>
+                    <li class="{% if habit.id == selected_habit.id %}selected-habit{% endif %}" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">
+                        {{ habit.name }}
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
@@ -73,7 +107,7 @@
                     </div>
                     <button type="submit">Save</button>
                 </form>
-                <p>Selected Date: {{ selected_date_formatted }}</p> <!-- To display the formatted date -->
+                <p>Selected Date: {{ selected_date_formatted }}</p>
             </div>
         </div>
         <div class="bottom-panel">
@@ -134,25 +168,31 @@
         });
     });
 
-    // Function to handle form submission
     function submitForm() {
         document.getElementById('habit_form').submit();
     }
 
-    // Function to handle habit selection
     function selectHabit(element) {
         event.preventDefault();
+
+        // Usuń klasę selected-habit z wszystkich elementów
+        var items = document.querySelectorAll('.habit-list li');
+        items.forEach(function(item) {
+            item.classList.remove('selected-habit');
+        });
+
+        // Dodaj klasę selected-habit do wybranego elementu
+        element.classList.add('selected-habit');
+
         const habitId = element.dataset.habitId;
         document.getElementById('habit_id').value = habitId;
         submitForm();
     }
 
-    // Automatically submit the form when month is changed
     document.getElementById('month').addEventListener('change', function() {
         this.form.submit();
     });
 
-    // Automatically submit the form when date is changed
     document.getElementById('date').addEventListener('change', function() {
         this.form.submit();
     });
