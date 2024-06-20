@@ -105,6 +105,7 @@
                 <form method="POST" class="month-form">
                     {% csrf_token %}
                     <input type="hidden" name="habit_id" id="month_habit_id" value="{{ selected_habit.id }}">
+                    <input type="hidden" name="selected_date" id="month_selected_date" value="{{ selected_date }}">
                     <label for="month">Month:</label>
                     <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="this.form.submit()">
                 </form>
@@ -116,6 +117,7 @@
                 <form method="POST" id="habit_form">
                     {% csrf_token %}
                     <input type="hidden" name="habit_id" id="habit_id" value="{{ selected_habit.id }}">
+                    <input type="hidden" name="selected_month" id="form_selected_month" value="{{ selected_month }}">
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="selected_date" value="{{ selected_date }}" onchange="this.form.submit()">
@@ -203,15 +205,21 @@
 
         const habitId = element.dataset.habitId;
         document.getElementById('habit_id').value = habitId;
-        document.getElementById('month_habit_id').value = habitId; // Update hidden input in month form
+        document.getElementById('month_habit_id').value = habitId;
+        document.getElementById('form_selected_month').value = document.getElementById('month').value; // Update hidden input in habit form
+        document.getElementById('month_selected_date').value = document.getElementById('date').value; // Update hidden input in month form
         submitForm();
     }
 
     document.getElementById('month').addEventListener('change', function() {
+        document.getElementById('month_selected_date').value = document.getElementById('date').value; // Update hidden input in month form
+        document.getElementById('habit_id').value = document.querySelector('.selected-habit').dataset.habitId; // Ensure habit_id is passed
         this.form.submit();
     });
 
     document.getElementById('date').addEventListener('change', function() {
+        document.getElementById('form_selected_month').value = document.getElementById('month').value; // Update hidden input in habit form
+        document.getElementById('habit_id').value = document.querySelector('.selected-habit').dataset.habitId; // Ensure habit_id is passed
         this.form.submit();
     });
 </script>
