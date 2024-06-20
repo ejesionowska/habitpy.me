@@ -40,6 +40,7 @@
             gap: 10px;
             padding: 0;
             list-style-type: none;
+            margin-top: 5px; /* Small margin above the habit list */
         }
 
         .habit-list li {
@@ -60,6 +61,26 @@
             background-color: #f0f0f0; /* Jasnoszare tło przy najechaniu */
             color: black; /* Czarna czcionka */
         }
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the start (left) */
+        }
+        .month-form {
+            margin-top: auto; /* Push the form to the bottom */
+            width: 100%; /* Ensure the form takes the full width */
+            display: flex;
+            justify-content: flex-start; /* Align form to the start (left) */
+            align-items: center;
+        }
+        .month-form label {
+            margin-right: 10px; /* Add margin between label and month selector */
+        }
+        .select-habit-label {
+            font-size: 16px; /* Smaller font size */
+            font-style: italic; /* Italic font */
+            font-weight: normal; /* Not bold */
+        }
     </style>
 </head>
 <body>
@@ -77,11 +98,7 @@
         </div>
         <div class="content">
             <div class="left-panel">
-                <form method="POST">
-                    {% csrf_token %}
-                    <label for="month">Month:</label>
-                    <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="this.form.submit()">
-                </form>
+                <span class="select-habit-label">Select a habit:</span>
                 <ul class="habit-list">
                     {% for habit in habits %}
                     <li class="{% if habit.id == selected_habit.id %}selected-habit{% endif %}" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">
@@ -89,6 +106,11 @@
                     </li>
                     {% endfor %}
                 </ul>
+                <form method="POST" class="month-form">
+                    {% csrf_token %}
+                    <label for="month">Month:</label>
+                    <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="this.form.submit()">
+                </form>
             </div>
             <div class="center-panel">
                 <img src="{% static 'images/joga.png' %}" alt="from: pixabay.com" class="center-image">
