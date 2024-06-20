@@ -11,12 +11,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 47vh; /* Adjusting to 47% of the viewport height */
-            width: 100%; /* Make sure the container takes full width */
+            height: 47vh;
+            width: 100%;
         }
         canvas {
-            max-height: 100%; /* Ensure the canvas doesn't exceed the container */
-            width: 90%; /* Ensure the canvas takes most of the container's width */
+            max-height: 100%;
+            width: 90%;
         }
         .header {
             display: flex;
@@ -27,59 +27,55 @@
             display: flex;
             gap: 10px;
         }
-
         .selected-habit {
-            background-color: #006699; /* Kolor niebieski */
-            color: white; /* Biała czcionka */
-            border: 1px solid white; /* Biała krawędź */
+            background-color: #006699;
+            color: white;
+            border: 1px solid white;
         }
-
         .habit-list {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             padding: 0;
             list-style-type: none;
-            margin-top: 5px; /* Small margin above the habit list */
+            margin-top: 5px;
         }
-
         .habit-list li {
-            border-radius: 25px; /* Bardziej półokrągłe */
-            padding: 5px 10px; /* Dodanie odstępu */
-            margin-bottom: 5px; /* Odstęp między elementami listy */
+            border-radius: 25px;
+            padding: 5px 10px;
+            margin-bottom: 5px;
             cursor: pointer;
-            background-color: white; /* Białe tło dla niewybranego elementu */
-            color: black; /* Czarna czcionka */
-            border: 1px solid #ccc; /* Szara krawędź */
-            flex: 1 1 calc(50% - 20px); /* Dwa elementy na rząd z odstępem */
-            text-align: center; /* Wyśrodkowanie tekstu */
-            font-size: 14px; /* Mniejsza czcionka */
-            box-sizing: border-box; /* Uwzględnij padding i border w szerokości elementu */
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            flex: 1 1 calc(50% - 20px);
+            text-align: center;
+            font-size: 14px;
+            box-sizing: border-box;
         }
-
         .habit-list li:hover {
-            background-color: #f0f0f0; /* Jasnoszare tło przy najechaniu */
-            color: black; /* Czarna czcionka */
+            background-color: #f0f0f0;
+            color: black;
         }
         .left-panel {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Align items to the start (left) */
+            align-items: flex-start;
         }
         .month-form {
-            margin-top: auto; /* Push the form to the bottom */
-            width: 100%; /* Ensure the form takes the full width */
+            margin-top: auto;
+            width: 100%;
             display: flex;
-            justify-content: flex-start; /* Align form to the start (left) */
+            justify-content: flex-start;
             align-items: center;
         }
         .month-form label {
-            margin-right: 10px; /* Add margin between label and month selector */
+            margin-right: 10px;
         }
         .select-habit-label {
-            font-size: 16px; /* Smaller font size */
-            font-style: italic; /* Italic font */
-            font-weight: normal; /* Not bold */
+            font-size: 16px;
+            font-style: italic;
+            font-weight: normal;
         }
     </style>
 </head>
@@ -108,6 +104,7 @@
                 </ul>
                 <form method="POST" class="month-form">
                     {% csrf_token %}
+                    <input type="hidden" name="habit_id" id="month_habit_id" value="{{ selected_habit.id }}">
                     <label for="month">Month:</label>
                     <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="this.form.submit()">
                 </form>
@@ -144,7 +141,7 @@
         const completionData = {{ completions|safe }};
         const labels = Array.from({ length: completionData.length }, (_, i) => i + 1);
         const data = completionData.map(item => item.count);
-        const maxValue = Math.max(...data, 200); // Use 200 if all values are zero
+        const maxValue = Math.max(...data, 200);
 
         const habitChart = new Chart(ctx, {
             type: 'bar',
@@ -153,18 +150,18 @@
                 datasets: [{
                     label: '{{ selected_habit.name }}',
                     data: data,
-                    backgroundColor: '#00cc99', // Solid color with no transparency
-                    borderColor: '#00FF00', // Border color
-                    borderWidth: 0.25 // Border thickness
+                    backgroundColor: '#00cc99',
+                    borderColor: '#00FF00',
+                    borderWidth: 0.25
                 }]
             },
             options: {
                 plugins: {
                     legend: {
                         labels: {
-                            color: '#ffffff', // Change legend text to white
+                            color: '#ffffff',
                             font: {
-                                size: 14 // Increase the legend font size by 2px
+                                size: 14
                             }
                         }
                     }
@@ -174,14 +171,14 @@
                         beginAtZero: true,
                         suggestedMax: maxValue,
                         ticks: {
-                            color: '#ffffff', // Change y-axis numbers to white
+                            color: '#ffffff',
                         }
                     },
                     x: {
                         ticks: {
-                            color: '#ffffff', // Change x-axis numbers to white
+                            color: '#ffffff',
                             callback: function(value, index, values) {
-                                return index + 1; // display the day of the month starting from 1
+                                return index + 1;
                             }
                         }
                     }
@@ -197,17 +194,16 @@
     function selectHabit(element) {
         event.preventDefault();
 
-        // Usuń klasę selected-habit z wszystkich elementów
         var items = document.querySelectorAll('.habit-list li');
         items.forEach(function(item) {
             item.classList.remove('selected-habit');
         });
 
-        // Dodaj klasę selected-habit do wybranego elementu
         element.classList.add('selected-habit');
 
         const habitId = element.dataset.habitId;
         document.getElementById('habit_id').value = habitId;
+        document.getElementById('month_habit_id').value = habitId; // Update hidden input in month form
         submitForm();
     }
 

@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from .models import City
-
+from datetime import date
 
 
 def home(request):
@@ -51,6 +51,8 @@ def habit_list(request):
 
     form = HabitForm()
     return render(request, 'habits.html', {'habits': habits, 'form': form})
+
+
 
 
 
@@ -110,6 +112,9 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
+
+
+
 
 
 def export_csv(request):
