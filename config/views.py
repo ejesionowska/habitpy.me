@@ -1,4 +1,4 @@
-#views.py 1501
+#views.py
 
 import csv
 from django.shortcuts import render, redirect
@@ -12,11 +12,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm, LoginForm
 from django.utils.dateformat import DateFormat
 from django.http import JsonResponse
-from django.contrib.auth import logout
-from django.http import JsonResponse
 from .models import City
 from datetime import date
-
 
 def home(request):
     return render(request, 'home.html')
@@ -52,10 +49,6 @@ def habit_list(request):
     form = HabitForm()
     return render(request, 'habits.html', {'habits': habits, 'form': form})
 
-
-
-
-
 @login_required
 def dashboard(request):
     user = request.user
@@ -67,7 +60,11 @@ def dashboard(request):
 
     if request.method == 'POST':
         if 'selected_date' in request.POST and request.POST.get('selected_date'):
-            selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
+            selected_date_str = request.POST.get('selected_date')
+            try:
+                selected_date = datetime.strptime(selected_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                selected_date = datetime.now().date()
         if 'selected_month' in request.POST and request.POST.get('selected_month'):
             selected_month = request.POST.get('selected_month')
         if 'habit_id' in request.POST and request.POST.get('habit_id'):
@@ -112,8 +109,6 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
-
-
 
 
 
@@ -188,9 +183,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
-
-
-
 
 cities = ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok", "Rzeszów", "Kalisz", "Katowice"]
 
