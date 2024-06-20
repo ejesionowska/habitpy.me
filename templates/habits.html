@@ -89,6 +89,24 @@
             justify-content: space-between; /* Distribute buttons and input evenly */
         }
 
+        .button-link, .edit-link, .export-button, .logout-button, button {
+            background-color: #006699;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px #004466;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .button-link:active, .edit-link:active, .export-button:active, .logout-button:active, button:active {
+            box-shadow: 0 2px #004466;
+            transform: translateY(2px);
+        }
+
         .content {
             text-align: center; /* Center the content */
             width: 100%;
@@ -145,7 +163,6 @@
                 <img src="{% static 'images/logo.png' %}" alt="habitpy.me">
             </div>
             <div class="buttons">
-                <input type="text" id="city-search" placeholder="Type a city name...">
                 <button onclick="document.getElementById('addModal').style.display='block'">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
                 <button onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
@@ -255,23 +272,6 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            $("#city-search").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'autocomplete' %}",
-                        data: {
-                            term: request.term
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-            });
-        });
-
         function closeModalAndOpenEditForm(id, name, goal, unit) {
             document.getElementById('editModal').style.display = 'none';
             openEditForm(id, name, goal, unit);
