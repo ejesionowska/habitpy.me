@@ -6,6 +6,7 @@
     <title>Your Habits</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@0.5.7"></script>
     <style>
         .chart-container {
             display: flex;
@@ -28,7 +29,7 @@
             gap: 10px;
         }
         .selected-habit {
-            background-color: #006699;
+            background-color: blue;
             color: white;
             border: 1px solid white;
         }
@@ -162,6 +163,11 @@
                         <label for="completion_count">Completion:</label>
                         <input type="number" id="completion_count" name="completion_count" value="{% if selected_habit and completions %}{{ completions.first.completion_count }}{% endif %}">
                     </div>
+                    <div class="form-group">
+                        <label for="daily_goal">Daily goal:</label>
+                        <span id="daily_goal">{{ selected_habit.goal }}</span>
+                    </div>
+                               
                     <button type="submit" class="save-button">Save</button>
                 </form>
             </div>
@@ -179,6 +185,8 @@
         const labels = Array.from({ length: completionData.length }, (_, i) => i + 1);
         const data = completionData.map(item => item.count);
         const maxValue = Math.max(...data, 200);
+
+        const dailyGoal = {{ selected_habit.goal }};
 
         const habitChart = new Chart(ctx, {
             type: 'bar',
@@ -201,6 +209,22 @@
                                 size: 14
                             }
                         }
+                    },
+                    annotation: {
+                        annotations: [
+                            {
+                                type: 'line',
+                                mode: 'horizontal',
+                                scaleID: 'y-axis-0',
+                                value: dailyGoal,
+                                borderColor: 'yellow',
+                                borderWidth: 2,
+                                label: {
+                                    enabled: true,
+                                    content: 'Daily Goal'
+                                }
+                            }
+                        ]
                     }
                 },
                 scales: {
@@ -255,6 +279,8 @@
         document.getElementById('month_selected_date').value = document.getElementById('date_selected_date').value;
         document.getElementById('month_selected_month').value = document.getElementById('month').value;
 
+        localStorage.setItem('selectedHabitId', habitId); // Store selected habit ID
+
         document.getElementById('month_form').submit();
     }
 
@@ -264,6 +290,17 @@
 
     document.getElementById('date').addEventListener('change', function() {
         updateDateFormAndSubmit();
+    });
+
+    // Restore selected habit on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedHabitId = localStorage.getItem('selectedHabitId');
+        if (selectedHabitId) {
+            const selectedHabitElement = document.querySelector(`[data-habit-id='${selectedHabitId}']`);
+            if (selectedHabitElement) {
+                selectedHabitElement.classList.add('selected-habit');
+            }
+        }
     });
 </script>
 
