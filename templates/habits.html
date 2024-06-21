@@ -86,7 +86,7 @@
             display: flex;
             gap: 10px;
             flex-grow: 1;
-            justify-content: space-between; /* Distribute buttons and input evenly */
+            justify-content: flex-end; /* Align buttons to the right */
         }
 
         .button-link, .edit-link, .export-button, .logout-button, button {
@@ -101,6 +101,7 @@
             box-shadow: 0 4px #004466;
             transition: all 0.2s ease;
             cursor: pointer;
+            margin: 0 2px; /* Add margin for spacing */
         }
         .button-link:active, .edit-link:active, .export-button:active, .logout-button:active, button:active {
             box-shadow: 0 2px #004466;
