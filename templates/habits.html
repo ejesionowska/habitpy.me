@@ -99,8 +99,8 @@
         }
 
         .table-container {
-            width: 66%;
-            margin: 0 20px;
+            width: 64.02%; /* 97% of original 66% */
+            margin: 0 60px;
         }
 
         table {
@@ -110,13 +110,13 @@
         }
 
         table th, table td {
-            border: 1px solid #ddd;
+            border: 1px solid darkgray;
             padding: 12px 15px;
             text-align: left;
         }
 
         table th {
-            background-color: cadetblue;
+            background-color: #447173;
             color: white;
             text-align: center;
             font-size: 1.1em;
@@ -151,7 +151,7 @@
         }
 
         .footer-image {
-            width: 600px;
+            width: 582px; /* 97% of original 600px */
             height: auto;
             margin-right: 20px;
         }
@@ -202,6 +202,8 @@
         {% if message %}
             <p>{{ message }}</p>
         {% endif %}
+    <br>
+        <img src="{% static 'images/elephant.png' %}" alt="Elephant" style="width: 20%; height: auto;">
     </div>
 
     <!-- Modals -->

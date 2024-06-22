@@ -7,14 +7,16 @@ class Habit(models.Model):
     name = models.CharField(max_length=100)
     goal = models.PositiveIntegerField()
     unit = models.CharField(max_length=20, choices=[
-        ('sekundy', 'Sekundy'),
-        ('minuty', 'Minuty'),
-        ('godziny', 'Godziny'),
-        ('powtórzenia', 'Powtórzenia'),
-        ('metry', 'Metry'),
-        ('kilometry', 'Kilometry'),
-        ('mile', 'Mile'),
-        ('inne', 'Inne')
+        ('seconds', 'Seconds'),
+        ('minutes', 'Minutes'),
+        ('hours', 'Hours'),
+        ('repetitions', 'Repetitions'),
+        ('steps', 'Steps'),
+        ('meters', 'Meters'),
+        ('kilometers', 'Kilometers'),
+        ('miles', 'Miles'),
+        ('other', 'Other')
+
     ])
 
     def __str__(self):
