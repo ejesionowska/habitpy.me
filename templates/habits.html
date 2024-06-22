@@ -18,7 +18,6 @@
             background-color: #349386;
         }
         
-
         .container {
             position: relative;
             display: flex;
@@ -51,7 +50,6 @@
             align-items: center;
             width: 100%;
             padding: 10px;
-            
         }
 
         .header .logo {
@@ -86,6 +84,10 @@
             transition: all 0.2s ease;
             cursor: pointer;
             margin: 0 2px;
+        }
+
+        .button-link:hover, .edit-link:hover, .export-button:hover, .logout-button:hover, button:hover {
+            background-color: #004466;
         }
 
         .button-link:active, .edit-link:active, .export-button:active, .logout-button:active, button:active {
@@ -171,7 +173,7 @@
             <div class="buttons">
                 <button onclick="document.getElementById('addModal').style.display='block'">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
-                <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+<button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
                 <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
                 <a href="{% url 'logout' %}" class="button-link">Log Out</a>
             </div>
@@ -212,7 +214,7 @@
     <!-- Modals -->
     <div id="addModal" class="modal">
         <div class="modal-content">
-            
+            <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
             <h2>Add a Habit</h2>
             <form method="POST">
                 {% csrf_token %}
@@ -273,7 +275,7 @@
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="deleteHabitId">
-                <button type="button" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
+<button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
                 <button type="submit" name="delete_habit">Yes</button>
             </form>
         </div>
@@ -305,14 +307,14 @@
         }
 
         // Close modal on clicking gray background
-       // window.onclick = function(event) {
-         //   var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
-          //  modals.forEach(function(modalId) {
-          //      var modal = document.getElementById(modalId);
-          //      if (event.target == modal) {
-          //          modal.style.display = "none";
-         //       }
-         //   });
+        // window.onclick = function(event) {
+        //   var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
+        //   modals.forEach(function(modalId) {
+        //      var modal = document.getElementById(modalId);
+        //      if (event.target == modal) {
+        //          modal.style.display = "none";
+        //      }
+        //  });
         // }
     </script>
 </body>
