@@ -1,5 +1,3 @@
-#views.py
-
 import csv
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -48,6 +46,7 @@ def habit_list(request):
             return redirect('habit_list')
 
     return render(request, 'habits.html', {'habits': habits, 'form': form})
+
 @login_required
 def dashboard(request):
     user = request.user
@@ -108,7 +107,6 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard.html', context)
-
 
 
 def export_csv(request):

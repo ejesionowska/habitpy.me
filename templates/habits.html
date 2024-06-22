@@ -17,7 +17,10 @@
             font-family: 'Arial', sans-serif;
             background-color: #349386;
         }
-        
+        * {
+            position: relative;
+            top: -1.2px;
+        }
         .container {
             position: relative;
             display: flex;
@@ -55,7 +58,7 @@
         .header .logo {
             display: inline-block;
             vertical-align: middle;
-            margin-right: 300px;
+            margin-right: 200px;
             margin-top: -20px; /* Adjust this value to move the logo upwards */
         }
 
@@ -160,6 +163,26 @@
             height: auto;
             margin-right: 20px;
         }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px; /* Reduced margin for smaller space */
+        }
+
+        .form-group label {
+            margin-right: 20px; /* 20px space between label and input */
+        }
+
+        .form-group input {
+            flex-grow: 1;
+            max-width: 200px; /* Adjust the width to be 50% shorter */
+        }
+
+        .modal button {
+            margin-top: 10px;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -218,8 +241,21 @@
             <h2>Add a Habit</h2>
             <form method="POST">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" name="add_habit">Add</button>
+                <div class="form-group">
+                    <label for="id_name">Name:</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_goal">Goal:</label>
+                    {{ form.goal }}
+                </div>
+                <div class="form-group">
+                    <label for="id_unit">Unit:</label>
+                    {{ form.unit }}
+                </div>
+                <div>
+                    <button type="submit" name="add_habit">Add</button>
+                </div>
             </form>
         </div>
     </div>
@@ -243,13 +279,21 @@
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="editHabitId">
-                <label for="name">Habit Name</label>
-                <input type="text" name="name" id="editHabitName" maxlength="10">
-                <label for="goal">Daily Goal</label>
-                <input type="number" name="goal" id="editHabitGoal" max="999999">
-                <label for="unit">Unit</label>
-                <input type="text" name="unit" id="editHabitUnit">
-                <button type="submit" name="edit_habit">Modify</button>
+                <div class="form-group">
+                    <label for="editHabitName">Name:</label>
+                    <input type="text" name="name" id="editHabitName" maxlength="18">
+                </div>
+                <div class="form-group">
+                    <label for="editHabitGoal">Goal:</label>
+                    <input type="number" name="goal" id="editHabitGoal" max="999999">
+                </div>
+                <div class="form-group">
+                    <label for="editHabitUnit">Unit:</label>
+                    <input type="text" name="unit" id="editHabitUnit">
+                </div>
+                <div>
+                    <button type="submit" name="edit_habit">Modify</button>
+                </div>
             </form>
         </div>
     </div>
@@ -275,7 +319,7 @@
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="deleteHabitId">
-<button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
+                <button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
                 <button type="submit" name="delete_habit">Yes</button>
             </form>
         </div>
@@ -287,7 +331,7 @@
             <span class="close" onclick="document.getElementById('maxHabitsModal').style.display='none'">&times;</span>
             <h2>Maximum Habits Reached</h2>
             <p>You're already working on the maximum number of habits.</p>
-        <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
+            <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
         </div>
     </div>
 
