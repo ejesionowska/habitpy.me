@@ -22,18 +22,19 @@ def home(request):
 def habit_list(request):
     user = request.user
     habits = Habit.objects.filter(user=user)
+    form = HabitForm()
 
     if request.method == 'POST':
         if 'add_habit' in request.POST:
-            if habits.count() < 6:
+            if habits.count() >= 6:
+                return render(request, 'habits.html', {'habits': habits, 'show_max_habits_modal': True})
+            else:
                 form = HabitForm(request.POST)
                 if form.is_valid():
                     habit = form.save(commit=False)
                     habit.user = user
                     habit.save()
                     return redirect('habit_list')
-            else:
-                return render(request, 'habits.html', {'habits': habits, 'message': "You're already working on the maximum number of habits."})
         elif 'edit_habit' in request.POST:
             habit_id = request.POST.get('habit_id')
             habit = Habit.objects.get(id=habit_id)
@@ -46,9 +47,7 @@ def habit_list(request):
             Habit.objects.get(id=habit_id).delete()
             return redirect('habit_list')
 
-    form = HabitForm()
     return render(request, 'habits.html', {'habits': habits, 'form': form})
-
 @login_required
 def dashboard(request):
     user = request.user

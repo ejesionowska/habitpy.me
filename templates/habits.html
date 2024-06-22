@@ -171,9 +171,9 @@
                 <img src="{% static 'images/logo.png' %}" alt="habitpy.me">
             </div>
             <div class="buttons">
-                <button onclick="document.getElementById('addModal').style.display='block'">Add a Habit</button>
+                <button id="addHabitButton">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
-<button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+                <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
                 <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
                 <a href="{% url 'logout' %}" class="button-link">Log Out</a>
             </div>
@@ -281,7 +281,26 @@
         </div>
     </div>
 
+    <!-- Modal for Maximum Habits Reached -->
+    <div id="maxHabitsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('maxHabitsModal').style.display='none'">&times;</span>
+            <h2>Maximum Habits Reached</h2>
+            <p>You're already working on the maximum number of habits.</p>
+        <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
+        </div>
+    </div>
+
     <script>
+        document.getElementById('addHabitButton').addEventListener('click', function() {
+            const habitsCount = {{ habits.count }};
+            if (habitsCount >= 6) {
+                document.getElementById('maxHabitsModal').style.display = 'block';
+            } else {
+                document.getElementById('addModal').style.display = 'block';
+            }
+        });
+
         function closeModalAndOpenEditForm(id, name, goal, unit) {
             document.getElementById('editModal').style.display = 'none';
             openEditForm(id, name, goal, unit);
@@ -305,17 +324,6 @@
             document.getElementById('deleteHabitName').innerText = name;
             document.getElementById('deleteFormModal').style.display = 'block';
         }
-
-        // Close modal on clicking gray background
-        // window.onclick = function(event) {
-        //   var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
-        //   modals.forEach(function(modalId) {
-        //      var modal = document.getElementById(modalId);
-        //      if (event.target == modal) {
-        //          modal.style.display = "none";
-        //      }
-        //  });
-        // }
     </script>
 </body>
 </html>
