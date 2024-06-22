@@ -101,7 +101,8 @@ form.active {
     display: block;
 }
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="email"] {
     width: calc(100% - 20px);
     padding: 10px;
     margin: 10px 0;
@@ -194,9 +195,10 @@ input[type="submit"]:hover {
 </div>
 <div class="right-side">
     <div class="logo">
-        <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 90%; height: 60%;">
-<p>Your daily habits tracker</p>
+        <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 40%; height: auto;">
+<p style="font-family: 'Arial', Arial, monospace; text-shadow: 2px 2px gray; padding: 0px; text-align: center; color: whitesmoke; font-size: 1.2em; margin: 0;">Your daily habits tracker</p>
     </div>
+    <br><br>
     <div class="tab">
         <button class="tablink active" onclick="openTab(event, 'log-in')">LOG IN</button>
         <button class="tablink" onclick="openTab(event, 'sign-up')">SIGN UP</button>
@@ -229,9 +231,10 @@ input[type="submit"]:hover {
         <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
         <h2>Forgot Password</h2>
         <p>Enter your email address to receive a password reset link.</p>
-        <form id="forgot-password-form">
-            <input type="text" name="email" placeholder="e-mail">
-            <input type="submit" value="OK">
+        <form id="forgot-password-form" action="{% url 'password_reset' %}" method="post">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="e-mail" required>
+            <input type="submit" value="Request reset link">
         </form>
     </div>
 </div>

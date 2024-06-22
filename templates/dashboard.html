@@ -130,7 +130,7 @@
         <div class="content">
             <div class="left-panel">
                 <span class="select-habit-label">Select a habit:</span>
-                <ul class="habit-list">
+                <ul class="habit-list" id="habit-list">
                     {% for habit in habits %}
                     <li class="{% if habit.id == selected_habit.id %}selected-habit{% endif %}" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">
                         {{ habit.name }}
@@ -247,6 +247,17 @@
                 }
             }
         });
+
+        // Restore selected habit on page load
+        const selectedHabitId = localStorage.getItem('selectedHabitId');
+        if (selectedHabitId) {
+            const selectedHabitElement = document.querySelector(`[data-habit-id='${selectedHabitId}']`);
+            if (selectedHabitElement) {
+                selectedHabitElement.classList.add('selected-habit');
+                document.getElementById('month_habit_id').value = selectedHabitId;
+                document.getElementById('date_habit_id').value = selectedHabitId;
+            }
+        }
     });
 
     function updateMonthFormAndSubmit() {
@@ -291,17 +302,6 @@
 
     document.getElementById('date').addEventListener('change', function() {
         updateDateFormAndSubmit();
-    });
-
-    // Restore selected habit on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectedHabitId = localStorage.getItem('selectedHabitId');
-        if (selectedHabitId) {
-            const selectedHabitElement = document.querySelector(`[data-habit-id='${selectedHabitId}']`);
-            if (selectedHabitElement) {
-                selectedHabitElement.classList.add('selected-habit');
-            }
-        }
     });
 </script>
 
