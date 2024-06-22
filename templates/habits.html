@@ -17,6 +17,7 @@
             font-family: 'Arial', sans-serif;
             background-color: #349386;
         }
+        
 
         .container {
             position: relative;
@@ -50,6 +51,7 @@
             align-items: center;
             width: 100%;
             padding: 10px;
+            
         }
 
         .header .logo {
@@ -148,6 +150,7 @@
             text-align: center;
             margin: 10px 0 0 0;
             padding-bottom: 10px;
+            margin-top: 20px;
         }
 
         .footer-image {
@@ -209,7 +212,7 @@
     <!-- Modals -->
     <div id="addModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
+            
             <h2>Add a Habit</h2>
             <form method="POST">
                 {% csrf_token %}
@@ -302,15 +305,15 @@
         }
 
         // Close modal on clicking gray background
-        window.onclick = function(event) {
-            var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
-            modals.forEach(function(modalId) {
-                var modal = document.getElementById(modalId);
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            });
-        }
+       // window.onclick = function(event) {
+         //   var modals = ['addModal', 'editModal', 'editFormModal', 'deleteModal', 'deleteFormModal'];
+          //  modals.forEach(function(modalId) {
+          //      var modal = document.getElementById(modalId);
+          //      if (event.target == modal) {
+          //          modal.style.display = "none";
+         //       }
+         //   });
+        // }
     </script>
 </body>
 </html>
