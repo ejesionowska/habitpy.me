@@ -168,7 +168,7 @@
             <div class="buttons">
                 <button onclick="document.getElementById('addModal').style.display='block'">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
-                <button onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+                <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
                 <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
                 <a href="{% url 'logout' %}" class="button-link">Log Out</a>
             </div>
