@@ -112,6 +112,29 @@
             box-shadow: 0 2px #004466;
             transform: translateY(2px);
         }
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            margin-right: 10px;
+        }
+        .form-group input[type="number"] {
+            width: 60px;
+        }
+        .zebra-image {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            max-height: 150px;
+        }
     </style>
 </head>
 <body>
@@ -168,9 +191,9 @@
                         <label for="daily_goal">Daily goal:</label>
                         <span id="daily_goal">{{ selected_habit.goal }}</span>
                     </div>
-                               
                     <button type="submit" class="save-button">Save</button>
                 </form>
+                <img src="{% static 'images/zebra.png' %}" alt="Zebra" class="zebra-image">
             </div>
         </div>
         <div class="bottom-panel">
