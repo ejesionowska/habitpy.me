@@ -12,35 +12,68 @@ body {
     padding: 0;
     display: flex;
     height: 100vh;
+
 }
 .left-side {
     width: 50%;
     background: url('{% static "images/homepage.png" %}') no-repeat center center;
     background-size: cover;
     display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+.left-side .content {
+    background-color: rgba(255, 255, 255, 0);
+   /* backdrop-filter: saturate(1) blur(12px);*/
+  /*  border: 2px solid rgba(181, 174, 174, 0.71); */
+    border-radius: 30px;
+    padding: 20px 15px;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
+    width: 650px;
+    height: 280px;
+    position: absolute;
+    bottom: 150px;
+    margin-top: 10px;
+}
+
+@media screen and (min-width:751px) {
+    :root {
+        --rectangle-width: 700px;
+        --rectangle-height: auto;
+    }
+    .left-side .content {
+        padding: 30px 20px;
+        border-radius: 50px;
+    }
 }
 .left-side h1 {
     font-size: 48px;
+    margin: 0;
 }
 .left-side p {
     font-size: 21px;
-    margin: 20px 0;
+    margin: 15px 0;
 }
 .left-side a {
-    background-color: #006699;
-    color: #fff;
+    background-color: #990017;
+    color: white;
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 5px;
     cursor: pointer;
+    display: inline-block;
+    box-shadow: 0 4px #4a020f;
 }
 .left-side a:hover {
-    background-color: #004466;
+    background-color: #4a020f;
+        color: white;
 }
 .right-side {
     width: 50%;
@@ -115,6 +148,7 @@ input[type="email"] {
 input[type="submit"] {
     background-color: #006699;
     border: none;
+   /* box-shadow: 0 2px #004466; */
     border-radius: 4px;
     color: #fff;
     padding: 10px;
@@ -139,12 +173,7 @@ input[type="submit"]:hover {
 }
 .remember-forgot input[type="checkbox"] {
     margin-right: 5px;
-}
-.forgot-password {
-    color: #fff;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 12px;
+
 }
 .modal {
     display: none;
@@ -181,25 +210,28 @@ input[type="submit"]:hover {
     text-decoration: none;
     cursor: pointer;
 }
+.margin-top-10 {
+    margin-top: 10px;
+}
 </style>
 </head>
 <body>
 <div class="left-side">
-    <div>
-        <h1><br>Not a member?</h1>
-        <p>
+    <div class="content">
+        <h1 class="margin-top-10">Not a member?</h1>
+        <p class="margin-top-10">
             habitpy.me is a platform that helps you to achieve your daily goals – <br> to become the best version of yourself.
             <br><br>
             Join us and let's see where your progress will lead you!
         </p>
-        <br>
-        <a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')">Create an Account</a>
+        <br class="margin-top-10">
+        <a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')" class="margin-top-10">Create an Account</a>
     </div>
 </div>
 <div class="right-side">
     <div class="logo">
         <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 40%; height: auto;">
-<p style="font-family: 'Arial', Arial, monospace; text-shadow: 2px 2px gray; padding: 0px; text-align: center; color: whitesmoke; font-size: 1.2em; margin: 0;">Your daily habits tracker</p>
+        <p style="font-family: 'Arial', Arial, monospace; text-shadow: 2px 2px gray; padding: 0px; text-align: center; color: whitesmoke; font-size: 1.2em; margin: 0;">Your daily habits tracker</p>
     </div>
     <br><br>
     <div class="tab">
