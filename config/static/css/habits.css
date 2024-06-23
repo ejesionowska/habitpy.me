@@ -1,0 +1,187 @@
+  body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #349386;
+        }
+        * {
+            position: relative;
+            top: -1.2px;
+        }
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            margin-top: 0;
+        }
+
+        .modal ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal ul li {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal ul li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .header .logo {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 20px;
+            margin-top: -20px; /* Adjust this value to move the logo upwards */
+        }
+
+        .header .logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .header .buttons {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+
+        .button-link, .edit-link, .export-button, .logout-button, button {
+            background-color: #006699;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px #004466;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            margin: 0 2px;
+        }
+
+        .button-link:hover, .edit-link:hover, .export-button:hover, .logout-button:hover, button:hover {
+            background-color: #004466;
+        }
+
+        .button-link:active, .edit-link:active, .export-button:active, .logout-button:active, button:active {
+            box-shadow: 0 2px #004466;
+            transform: translateY(2px);
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .table-container {
+            width: 64.02%; /* 97% of original 66% */
+            margin: 0 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            border: 1px solid darkgray;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #447173;
+            color: white;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        table td {
+            background-color: white;
+            color: black;
+            font-size: 1em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .header-title {
+            text-align: center;
+            margin: 10px 0 0 0;
+            padding-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .footer-image {
+            width: 582px; /* 97% of original 600px */
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px; /* Reduced margin for smaller space */
+        }
+
+        .form-group label {
+            margin-right: 20px; /* 20px space between label and input */
+            min-width: 80px; /* Ensure all labels have the same width */
+        }
+
+        .form-group input {
+            flex-grow: 1;
+            max-width: 200px; /* Adjust the width to be 50% shorter */
+        }
+
+        .modal button {
+            margin-top: 10px;
+        }
+
+        .modal .button-container {
+            text-align: right; /* Align buttons to the right */
+        }
+
+        /* Additional Styles for Modals with Modified Width */
+        #editFormModal .modal-content,
+        #addModal .modal-content {
+            width: 324px;
+        }
