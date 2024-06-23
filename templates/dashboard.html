@@ -1,23 +1,35 @@
 {% load static %}
+<!-- =====================================
+     Loading necessary static files and setting up the HTML document
+     ===================================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Setting the character encoding for the document -->
     <meta charset="UTF-8">
+    <!-- Setting the title of the document -->
     <title>Your Habits</title>
+    <!-- Linking to CSS files -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">  
+    <!-- Including Chart.js library and annotation plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@0.5.7"></script>
-    <style>
-  
-    </style>
 </head>
 <body>
+    <!-- =====================================
+         Main container for the dashboard
+         ===================================== -->
     <div class="container">
+        <!-- =====================================
+             Header section with logo and navigation buttons
+             ===================================== -->
         <div class="header">
+            <!-- Logo section -->
             <div class="logo">
                 <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 32.3%; height: auto;">
             </div>
+            <!-- Navigation buttons -->
             <div class="buttons">
                 <a href="{% url 'habit_list' %}" class="edit-link">Settings</a>
                 <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
@@ -25,7 +37,11 @@
                 <a href="{% url 'logout' %}" class="logout-button">Log Out</a>
             </div>
         </div>
+        <!-- =====================================
+             Main content section
+             ===================================== -->
         <div class="content">
+            <!-- Left panel for habit selection and month navigation -->
             <div class="left-panel">
                 <span class="select-habit-label">Select a habit:</span>
                 <ul class="habit-list" id="habit-list">
@@ -35,6 +51,7 @@
                     </li>
                     {% endfor %}
                 </ul>
+                <!-- Month navigation form -->
                 <form method="POST" class="month-form" id="month_form">
                     {% csrf_token %}
                     <input type="hidden" name="habit_id" id="month_habit_id" value="{{ selected_habit.id }}">
@@ -46,9 +63,11 @@
                     <button type="button" id="current_month" class="today-button" onclick="goToCurrentMonth()">Current Month</button>
                 </form>
             </div>
+            <!-- Center panel with image -->
             <div class="center-panel">
                 <img src="{% static 'images/joga.png' %}" alt="from: pixabay.com" class="center-image">
             </div>
+            <!-- Right panel for daily completion form -->
             <div class="right-panel">
                 <form method="POST" id="date_form">
                     {% csrf_token %}
@@ -73,6 +92,9 @@
                 <img src="{% static 'images/zebra.png' %}" alt="Zebra" class="zebra-image">
             </div>
         </div>
+        <!-- =====================================
+             Bottom panel for the habit chart
+             ===================================== -->
         <div class="bottom-panel">
             <div class="chart-container">
                 <canvas id="habitChart"></canvas>
@@ -80,6 +102,9 @@
         </div>
     </div>
 <script>
+    // =====================================
+    // JavaScript for handling the habit chart
+    // =====================================
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('habitChart').getContext('2d');
         const completionData = {{ completions|safe }};
@@ -162,6 +187,9 @@
         }
     });
 
+    // =====================================
+    // Function to update month form and submit
+    // =====================================
     function updateMonthFormAndSubmit() {
         document.getElementById('month_habit_id').value = document.querySelector('.selected-habit').dataset.habitId;
         document.getElementById('month_selected_date').value = document.getElementById('date_selected_date').value;
@@ -169,6 +197,9 @@
         document.getElementById('month_form').submit();
     }
 
+    // =====================================
+    // Function to update date form and submit
+    // =====================================
     function updateDateFormAndSubmit() {
         document.getElementById('date_habit_id').value = document.querySelector('.selected-habit').dataset.habitId;
         document.getElementById('date_selected_month').value = document.getElementById('month').value;
@@ -176,6 +207,9 @@
         document.getElementById('date_form').submit();
     }
 
+    // =====================================
+    // Function to select a habit and update forms
+    // =====================================
     function selectHabit(element) {
         event.preventDefault();
 
@@ -198,6 +232,9 @@
         document.getElementById('month_form').submit();
     }
 
+    // =====================================
+    // Function to change the month and update the form
+    // =====================================
     function changeMonth(direction) {
         const monthInput = document.getElementById('month');
         let currentDate = new Date(monthInput.value + '-01');
@@ -209,6 +246,9 @@
         updateMonthFormAndSubmit();
     }
 
+    // =====================================
+    // Function to go to the current month
+    // =====================================
     function goToCurrentMonth() {
         const today = new Date();
         const currentMonth = today.toISOString().slice(0, 7); // Format to YYYY-MM
@@ -217,6 +257,9 @@
         updateMonthFormAndSubmit();
     }
 
+    // =====================================
+    // Event listeners for month and date changes
+    // =====================================
     document.getElementById('month').addEventListener('change', function() {
         updateMonthFormAndSubmit();
     });
@@ -225,6 +268,5 @@
         updateDateFormAndSubmit();
     });
 </script>
-
 </body>
 </html>

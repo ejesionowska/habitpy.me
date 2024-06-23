@@ -1,121 +1,139 @@
 {% load static %}
+<!-- =====================================
+     Loading necessary static files and setting up the HTML document
+     ===================================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Setting the character encoding for the document -->
     <meta charset="UTF-8">
+    <!-- Setting the viewport for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Setting the title of the document -->
     <title>habitpy.me - Your daily habits tracker</title>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <link rel="stylesheet" href="{% static 'css/home.css' %}"> 
-    <style>
-
-</style>
+    <!-- Linking to CSS files -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
-<div class="left-side">
-    <div class="content">
-        <h1 class="margin-top-10">Not a member?</h1>
-        <p class="margin-top-10">
-            habitpy.me is a platform that helps you to achieve your daily goals – <br> to become the best version of yourself.
-            <br><br>
-            Join us and let's see where your progress will lead you!
-        </p>
-        <br class="margin-top-10">
-        <a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')" class="margin-top-10">Create an Account</a>
+    <!-- =====================================
+         Left side section with content for new users
+         ===================================== -->
+    <div class="left-side">
+        <div class="content">
+            <h1 class="margin-top-10">Not a member?</h1>
+            <p class="margin-top-10">
+                habitpy.me is a platform that helps you to achieve your daily goals – <br> to become the best version of yourself.
+                <br><br>
+                Join us and let's see where your progress will lead you!
+            </p>
+            <br class="margin-top-10">
+            <a href="javascript:void(0);" onclick="openTabAndFocus('sign-up')" class="margin-top-10">Create an Account</a>
+        </div>
     </div>
-</div>
-<div class="right-side">
-    <div class="logo">
-        <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 40%; height: auto;">
-        <p style="font-family: 'Arial', Arial, monospace; text-shadow: 2px 2px gray; padding: 0px; text-align: center; color: whitesmoke; font-size: 1.2em; margin: 0;">Your daily habits tracker</p>
+    <!-- =====================================
+         Right side section with logo, tabs, and forms
+         ===================================== -->
+    <div class="right-side">
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 40%; height: auto;">
+            <p style="font-family: 'Arial', Arial, monospace; text-shadow: 2px 2px gray; padding: 0px; text-align: center; color: whitesmoke; font-size: 1.2em; margin: 0;">Your daily habits tracker</p>
+        </div>
+        <br><br>
+        <!-- Tab navigation for log in and sign up -->
+        <div class="tab">
+            <button class="tablink active" onclick="openTab(event, 'log-in')">LOG IN</button>
+            <button class="tablink" onclick="openTab(event, 'sign-up')">SIGN UP</button>
+        </div>
+        <!-- Form container for log in and sign up forms -->
+        <div class="form-container">
+            <form id="log-in" action="{% url 'login' %}" method="post" class="active">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="e-mail or username">
+                <input type="password" name="password" placeholder="password">
+                <input type="submit" value="LOG IN">
+                <div class="remember-forgot">
+                    <label><input type="checkbox" name="remember"> Remember me</label>
+                </div>
+            </form>
+            <form id="sign-up" action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="name" id="sign-up-name">
+                <input type="text" name="email" placeholder="e-mail">
+                <input type="password" name="password1" placeholder="password">
+                <input type="password" name="password2" placeholder="repeat password">
+                <input type="submit" value="SIGN UP">
+            </form>
+        </div>
     </div>
-    <br><br>
-    <div class="tab">
-        <button class="tablink active" onclick="openTab(event, 'log-in')">LOG IN</button>
-        <button class="tablink" onclick="openTab(event, 'sign-up')">SIGN UP</button>
+
+    <!-- =====================================
+         Forgot Password Modal Section
+         ===================================== -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
+            <h2>Forgot Password</h2>
+            <p>Enter your email address to receive a password reset link.</p>
+            <form id="forgot-password-form" action="{% url 'password_reset' %}" method="post">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="e-mail" required>
+                <input type="submit" value="Request reset link">
+            </form>
+        </div>
     </div>
-    <div class="form-container">
-        <form id="log-in" action="{% url 'login' %}" method="post" class="active">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="e-mail or username">
-            <input type="password" name="password" placeholder="password">
-            <input type="submit" value="LOG IN">
-            <div class="remember-forgot">
-                <label><input type="checkbox" name="remember"> Remember me</label>
-            </div>
-        </form>
-        <form id="sign-up" action="{% url 'signup' %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="name" id="sign-up-name">
-            <input type="text" name="email" placeholder="e-mail">
-            <input type="password" name="password1" placeholder="password">
-            <input type="password" name="password2" placeholder="repeat password">
-            <input type="submit" value="SIGN UP">
-        </form>
-    </div>
-</div>
 
-<!--
-=============================================================================
-Forgot Password Modal Section
-=============================================================================
--->
-<div id="forgotPasswordModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
-        <h2>Forgot Password</h2>
-        <p>Enter your email address to receive a password reset link.</p>
-        <form id="forgot-password-form" action="{% url 'password_reset' %}" method="post">
-            {% csrf_token %}
-            <input type="email" name="email" placeholder="e-mail" required>
-            <input type="submit" value="Request reset link">
-        </form>
-    </div>
-</div>
-
-<script>
-    function openTab(evt, tabName) {
-        var i, x, tablinks;
-        x = document.getElementsByTagName("form");
-        for (i = 0; i < x.length; i++) {
-            x[i].classList.remove("active");
+    <!-- =====================================
+         JavaScript for handling tab switching and modals
+         ===================================== -->
+    <script>
+        // Function to switch between tabs
+        function openTab(evt, tabName) {
+            var i, x, tablinks;
+            x = document.getElementsByTagName("form");
+            for (i = 0; i < x.length; i++) {
+                x[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
         }
-        tablinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
-    }
 
-    function openTabAndFocus(tabName) {
-        var x = document.getElementsByTagName("form");
-        for (var i = 0; i < x.length; i++) {
-            x[i].classList.remove("active");
+        // Function to switch to sign up tab and focus on name input
+        function openTabAndFocus(tabName) {
+            var x = document.getElementsByTagName("form");
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("active");
+            }
+            var tablinks = document.getElementsByClassName("tablink");
+            for (var i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            document.querySelector(".tab button[onclick*='" + tabName + "']").classList.add("active");
+            document.getElementById("sign-up-name").focus();
         }
-        var tablinks = document.getElementsByClassName("tablink");
-        for (var i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
+
+        // Function to open forgot password modal
+        function openForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'block';
         }
-        document.getElementById(tabName).classList.add("active");
-        document.querySelector(".tab button[onclick*='" + tabName + "']").classList.add("active");
-        document.getElementById("sign-up-name").focus();
-    }
 
-    function openForgotPasswordModal() {
-        document.getElementById('forgotPasswordModal').style.display = 'block';
-    }
-
-    function closeForgotPasswordModal() {
-        document.getElementById('forgotPasswordModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        var modal = document.getElementById('forgotPasswordModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
+        // Function to close forgot password modal
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
         }
-    }
-</script>
+
+        // Close modal if clicking outside of it
+        window.onclick = function(event) {
+            var modal = document.getElementById('forgotPasswordModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

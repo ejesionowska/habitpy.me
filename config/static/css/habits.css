@@ -1,187 +1,215 @@
-  body {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding-top: 20px;
-            font-family: 'Arial', sans-serif;
-            background-color: #349386;
-        }
-        * {
-            position: relative;
-            top: -1.2px;
-        }
-        .container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 1;
-            margin-top: 0;
-        }
+/* Global Styles */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding-top: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #349386;
+}
 
-        .modal ul {
-            list-style: none;
-            padding: 0;
-        }
+* {
+    position: relative;
+    top: -1.2px;
+}
 
-        .modal ul li {
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+/* Container Styles */
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    margin-top: 0;
+}
 
-        .modal ul li:hover {
-            background-color: #f0f0f0;
-        }
+/* Modal Styles */
+.modal ul {
+    list-style: none;
+    padding: 0;
+}
 
-        .header {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            width: 100%;
-            padding: 10px;
-        }
+.modal ul li {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        .header .logo {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 20px;
-            margin-top: -20px; /* Adjust this value to move the logo upwards */
-        }
+.modal ul li:hover {
+    background-color: #f0f0f0;
+}
 
-        .header .logo img {
-            width: 200px;
-            height: auto;
-        }
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
 
-        .header .buttons {
-            display: flex;
-            gap: 10px;
-            flex-grow: 1;
-            justify-content: flex-end;
-        }
+.header .logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 20px;
+    margin-top: -20px;
+}
 
-        .button-link, .edit-link, .export-button, .logout-button, button {
-            background-color: #006699;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px #004466;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            margin: 0 2px;
-        }
+.header .logo img {
+    width: 200px;
+    height: auto;
+}
 
-        .button-link:hover, .edit-link:hover, .export-button:hover, .logout-button:hover, button:hover {
-            background-color: #004466;
-        }
+.header .buttons {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
 
-        .button-link:active, .edit-link:active, .export-button:active, .logout-button:active, button:active {
-            box-shadow: 0 2px #004466;
-            transform: translateY(2px);
-        }
+/* Button Styles */
+.button-link,
+.edit-link,
+.export-button,
+.logout-button,
+button {
+    background-color: #006699;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px #004466;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin: 0 2px;
+}
 
-        .content {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100%;
-        }
+.button-link:hover,
+.edit-link:hover,
+.export-button:hover,
+.logout-button:hover,
+button:hover {
+    background-color: #004466;
+}
 
-        .table-container {
-            width: 64.02%; /* 97% of original 66% */
-            margin: 0 60px;
-        }
+.button-link:active,
+.edit-link:active,
+.export-button:active,
+.logout-button:active,
+button:active {
+    box-shadow: 0 2px #004466;
+    transform: translateY(2px);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
+/* Content Styles */
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
 
-        table th, table td {
-            border: 1px solid darkgray;
-            padding: 12px 15px;
-            text-align: left;
-        }
+/* Table Container */
+.table-container {
+    width: 64.02%;
+    margin: 0 60px;
+}
 
-        table th {
-            background-color: #447173;
-            color: white;
-            text-align: center;
-            font-size: 1.1em;
-        }
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
 
-        table td {
-            background-color: white;
-            color: black;
-            font-size: 1em;
-        }
+table th,
+table td {
+    border: 1px solid darkgray;
+    padding: 12px 15px;
+    text-align: left;
+}
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+table th {
+    background-color: #447173;
+    color: white;
+    text-align: center;
+    font-size: 1.1em;
+}
 
-        tr:hover {
-            background-color: #e0f7fa;
-        }
+table td {
+    background-color: white;
+    color: black;
+    font-size: 1em;
+}
 
-        .text-left {
-            text-align: left;
-        }
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
 
-        .text-center {
-            text-align: center;
-        }
+tr:hover {
+    background-color: #e0f7fa;
+}
 
-        .header-title {
-            text-align: center;
-            margin: 10px 0 0 0;
-            padding-bottom: 10px;
-            margin-top: 20px;
-        }
+/* Text Alignment Styles */
+.text-left {
+    text-align: left;
+}
 
-        .footer-image {
-            width: 582px; /* 97% of original 600px */
-            height: auto;
-            margin-right: 20px;
-        }
+.text-center {
+    text-align: center;
+}
 
-        .form-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px; /* Reduced margin for smaller space */
-        }
+/* Header Title */
+.header-title {
+    text-align: center;
+    margin: 10px 0 0 0;
+    padding-bottom: 10px;
+    margin-top: 20px;
+}
 
-        .form-group label {
-            margin-right: 20px; /* 20px space between label and input */
-            min-width: 80px; /* Ensure all labels have the same width */
-        }
+/* Footer Image */
+.footer-image {
+    width: 582px;
+    height: auto;
+    margin-right: 20px;
+}
 
-        .form-group input {
-            flex-grow: 1;
-            max-width: 200px; /* Adjust the width to be 50% shorter */
-        }
+/* Form Group Styles */
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
 
-        .modal button {
-            margin-top: 10px;
-        }
+.form-group label {
+    margin-right: 20px;
+    min-width: 80px;
+}
 
-        .modal .button-container {
-            text-align: right; /* Align buttons to the right */
-        }
+.form-group input {
+    flex-grow: 1;
+    max-width: 200px;
+}
 
-        /* Additional Styles for Modals with Modified Width */
-        #editFormModal .modal-content,
-        #addModal .modal-content {
-            width: 324px;
-        }
+/* Modal Button Styles */
+.modal button {
+    margin-top: 10px;
+}
+
+.modal .button-container {
+    text-align: right;
+}
+
+/* Modal Content Styles */
+#editFormModal .modal-content,
+#addModal .modal-content {
+    width: 324px;
+}

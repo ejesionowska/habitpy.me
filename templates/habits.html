@@ -1,38 +1,56 @@
 {% load static %}
+<!-- =====================================
+     Loading necessary static files and setting up the HTML document
+     ===================================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Setting the character encoding for the document -->
     <meta charset="UTF-8">
+    <!-- Setting the title of the document -->
     <title>Your Habits</title>
+    <!-- Linking to CSS files -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/habits.css' %}">    
+    <!-- Including jQuery UI CSS -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <style>
-      
-    </style>
+    <!-- Including jQuery library -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Including jQuery UI library -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <body>
+    <!-- =====================================
+         Main container for the habits page
+         ===================================== -->
     <div class="container">
+        <!-- =====================================
+             Header section with logo and buttons
+             ===================================== -->
         <div class="header">
+            <!-- Logo section -->
             <div class="logo">
                 <img src="{% static 'images/logo.png' %}" alt="habitpy.me">
             </div>
+            <!-- Buttons for actions -->
             <div class="buttons">
                 <button id="addHabitButton">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
                 <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
-                
                 <button onclick="document.getElementById('changePasswordModal').style.display='block'">Change Password</button>
                 <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
                 <a href="{% url 'logout' %}" class="button-link">Log Out</a>
             </div>
         </div>
+        <!-- Header title -->
         <div class="header-title">
             <h1>Your Habits</h1>
         </div>
+        <!-- =====================================
+             Main content section
+             ===================================== -->
         <div class="content">
+            <!-- Table container for displaying habits -->
             <div class="table-container">
                 <table>
                     <thead>
@@ -53,6 +71,7 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Image at the bottom of the content -->
             <img src="{% static 'images/sports.png' %}" alt="Sports" class="footer-image" style="width: 637px; height: auto;">
         </div>
         {% if message %}
@@ -62,7 +81,11 @@
         <img src="{% static 'images/elephant.png' %}" alt="Elephant" style="width: 20%; height: auto;">
     </div>
 
-    <!-- Modals -->
+    <!-- =====================================
+         Modals for various actions
+         ===================================== -->
+
+    <!-- Add Habit Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
@@ -88,6 +111,7 @@
         </div>
     </div>
 
+    <!-- Edit Habit Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
@@ -100,6 +124,7 @@
         </div>
     </div>
 
+    <!-- Edit Habit Form Modal -->
     <div id="editFormModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('editFormModal').style.display='none'">&times;</span>
@@ -126,6 +151,7 @@
         </div>
     </div>
 
+    <!-- Delete Habit Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('deleteModal').style.display='none'">&times;</span>
@@ -138,6 +164,7 @@
         </div>
     </div>
 
+    <!-- Delete Habit Form Modal -->
     <div id="deleteFormModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('deleteFormModal').style.display='none'">&times;</span>
@@ -193,7 +220,11 @@
         </div>
     </div>
 
+    <!-- =====================================
+         JavaScript for handling various actions
+         ===================================== -->
     <script>
+        // Event listener for the add habit button
         document.getElementById('addHabitButton').addEventListener('click', function() {
             const habitsCount = {{ habits.count }};
             if (habitsCount >= 6) {
@@ -203,6 +234,7 @@
             }
         });
 
+        // Functions to handle closing modals and opening forms
         function closeModalAndOpenEditForm(id, name, goal, unit) {
             document.getElementById('editModal').style.display = 'none';
             openEditForm(id, name, goal, unit);
@@ -213,6 +245,7 @@
             openDeleteForm(id, name);
         }
 
+        // Functions to open edit and delete forms with the selected habit's data
         function openEditForm(id, name, goal, unit) {
             document.getElementById('editHabitId').value = id;
             document.getElementById('editHabitName').value = name;

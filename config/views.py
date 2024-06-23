@@ -1,41 +1,48 @@
+# ==============================================================
+# Importing necessary modules and functions
+# ==============================================================
 import csv
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Habit, Completion
 from .forms import HabitForm, CompletionForm
-from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm, LoginForm
 from django.utils.dateformat import DateFormat
 from django.http import JsonResponse
-from .models import City
-from datetime import date
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
 
+# ==============================================================
+# Home view
+# ==============================================================
 def home(request):
     return render(request, 'home.html')
 
+
+# ==============================================================
+# Habit list view - displays, adds, edits and deletes habits
+# ==============================================================
 @login_required
 def habit_list(request):
     user = request.user
     habits = Habit.objects.filter(user=user)
-    form = HabitForm()
 
     if request.method == 'POST':
         if 'add_habit' in request.POST:
-            if habits.count() >= 6:
-                return render(request, 'habits.html', {'habits': habits, 'show_max_habits_modal': True})
-            else:
+            if habits.count() < 6:
                 form = HabitForm(request.POST)
                 if form.is_valid():
                     habit = form.save(commit=False)
                     habit.user = user
                     habit.save()
                     return redirect('habit_list')
+            else:
+                return render(request, 'habits.html', {'habits': habits, 'message': "You're already working on the maximum number of habits."})
         elif 'edit_habit' in request.POST:
             habit_id = request.POST.get('habit_id')
             habit = Habit.objects.get(id=habit_id)
@@ -48,8 +55,13 @@ def habit_list(request):
             Habit.objects.get(id=habit_id).delete()
             return redirect('habit_list')
 
+    form = HabitForm()
     return render(request, 'habits.html', {'habits': habits, 'form': form})
 
+
+# ==============================================================
+# Dashboard view - displays habit completions
+# ==============================================================
 @login_required
 def dashboard(request):
     user = request.user
@@ -61,15 +73,11 @@ def dashboard(request):
 
     if request.method == 'POST':
         if 'selected_date' in request.POST and request.POST.get('selected_date'):
-            selected_date_str = request.POST.get('selected_date')
-            try:
-                selected_date = datetime.strptime(selected_date_str, '%Y-%m-%d').date()
-            except ValueError:
-                selected_date = datetime.now().date()
+            selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
         if 'selected_month' in request.POST and request.POST.get('selected_month'):
             selected_month = request.POST.get('selected_month')
-        if 'habit_id' in request.POST and request.POST.get('habit_id'):
-            habit_id = request.POST.get('habit_id')
+        habit_id = request.POST.get('habit_id')
+        if habit_id:
             try:
                 selected_habit = Habit.objects.get(id=habit_id, user=user)
             except Habit.DoesNotExist:
@@ -80,7 +88,7 @@ def dashboard(request):
                 completion_count = int(request.POST.get('completion_count', 0))
             except ValueError:
                 completion_count = 0
-            Completion.objects.update_or_create(
+            completion, created = Completion.objects.update_or_create(
                 habit=selected_habit, added=selected_date,
                 defaults={'completion_count': completion_count}
             )
@@ -112,6 +120,9 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 
+# ==============================================================
+# Export habits data to CSV
+# ==============================================================
 def export_csv(request):
     user = request.user
     habits = Habit.objects.filter(user=user)
@@ -128,6 +139,10 @@ def export_csv(request):
 
     return response
 
+
+# ==============================================================
+# Export habits data to PDF
+# ==============================================================
 def export_pdf(request):
     from django.http import HttpResponse
     from reportlab.pdfgen import canvas
@@ -158,6 +173,10 @@ def export_pdf(request):
     p.save()
     return response
 
+
+# ==============================================================
+# User sign-up view
+# ==============================================================
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -169,6 +188,10 @@ def signup_view(request):
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
 
+
+# ==============================================================
+# User login view
+# ==============================================================
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
@@ -180,25 +203,18 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+
+# ==============================================================
+# User logout view
+# ==============================================================
 def logout_view(request):
     logout(request)
     return redirect('home')
 
-cities = ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Białystok", "Rzeszów", "Kalisz", "Katowice"]
 
-def autocomplete(request):
-    if 'term' in request.GET:
-        qs = cities
-        q = request.GET.get('term')
-        qs = [city for city in cities if city.lower().startswith(q.lower())]
-        return JsonResponse(qs, safe=False)
-    return JsonResponse([], safe=False)
-
-def home(request):
-    return render(request, 'home.html')
-
-
-
+# ==============================================================
+# Change password view
+# ==============================================================
 @login_required
 def change_password(request):
     if request.method == 'POST':
@@ -206,7 +222,7 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            return redirect('dashboard')  # Redirect to a success page
+            return redirect('dashboard')
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'change-password.html', {'form': form})
