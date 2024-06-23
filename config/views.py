@@ -12,6 +12,9 @@ from django.utils.dateformat import DateFormat
 from django.http import JsonResponse
 from .models import City
 from datetime import date
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 
 def home(request):
     return render(request, 'home.html')
@@ -193,3 +196,17 @@ def autocomplete(request):
 
 def home(request):
     return render(request, 'home.html')
+
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            return redirect('dashboard')  # Redirect to a success page
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change-password.html', {'form': form})

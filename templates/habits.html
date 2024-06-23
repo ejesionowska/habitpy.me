@@ -58,7 +58,7 @@
         .header .logo {
             display: inline-block;
             vertical-align: middle;
-            margin-right: 200px;
+            margin-right: 20px;
             margin-top: -20px; /* Adjust this value to move the logo upwards */
         }
 
@@ -173,6 +173,7 @@
 
         .form-group label {
             margin-right: 20px; /* 20px space between label and input */
+            min-width: 80px; /* Ensure all labels have the same width */
         }
 
         .form-group input {
@@ -182,6 +183,16 @@
 
         .modal button {
             margin-top: 10px;
+        }
+
+        .modal .button-container {
+            text-align: right; /* Align buttons to the right */
+        }
+
+        /* Additional Styles for Modals with Modified Width */
+        #editFormModal .modal-content,
+        #addModal .modal-content {
+            width: 324px;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -197,6 +208,8 @@
                 <button id="addHabitButton">Add a Habit</button>
                 <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
                 <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+                
+                <button onclick="document.getElementById('changePasswordModal').style.display='block'">Change Password</button>
                 <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
                 <a href="{% url 'logout' %}" class="button-link">Log Out</a>
             </div>
@@ -253,7 +266,7 @@
                     <label for="id_unit">Unit:</label>
                     {{ form.unit }}
                 </div>
-                <div>
+                <div class="button-container">
                     <button type="submit" name="add_habit">Add</button>
                 </div>
             </form>
@@ -291,7 +304,7 @@
                     <label for="editHabitUnit">Unit:</label>
                     <input type="text" name="unit" id="editHabitUnit">
                 </div>
-                <div>
+                <div class="button-container">
                     <button type="submit" name="edit_habit">Modify</button>
                 </div>
             </form>
@@ -319,8 +332,10 @@
             <form method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="habit_id" id="deleteHabitId">
-                <button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
-                <button type="submit" name="delete_habit">Yes</button>
+                <div class="button-container">
+                    <button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
+                    <button type="submit" name="delete_habit">Yes</button>
+                </div>
             </form>
         </div>
     </div>
@@ -331,7 +346,35 @@
             <span class="close" onclick="document.getElementById('maxHabitsModal').style.display='none'">&times;</span>
             <h2>Maximum Habits Reached</h2>
             <p>You're already working on the maximum number of habits.</p>
-            <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
+            <div class="button-container">
+                <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Changing Password -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('changePasswordModal').style.display='none'">&times;</span>
+            <h2>Change Password</h2>
+            <form method="POST" action="{% url 'change_password' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="old_password">Old Password:</label>
+                    <input type="password" name="old_password" id="old_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password1">New Password:</label>
+                    <input type="password" name="new_password1" id="new_password1" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password2">Confirm New Password:</label>
+                    <input type="password" name="new_password2" id="new_password2" required>
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="change_password">Change Password</button>
+                </div>
+            </form>
         </div>
     </div>
 
