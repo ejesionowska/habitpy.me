@@ -1,0 +1,272 @@
+{% load static %}
+<!-- =====================================
+     Loading necessary static files and setting up the HTML document
+     ===================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Setting the character encoding for the document -->
+    <meta charset="UTF-8">
+    <!-- Setting the title of the document -->
+    <title>Your Habits</title>
+    <!-- Linking to CSS files -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">  
+    <!-- Including Chart.js library and annotation plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@0.5.7"></script>
+</head>
+<body>
+    <!-- =====================================
+         Main container for the dashboard
+         ===================================== -->
+    <div class="container">
+        <!-- =====================================
+             Header section with logo and navigation buttons
+             ===================================== -->
+        <div class="header">
+            <!-- Logo section -->
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="habitpy.me" style="width: 32.3%; height: auto;">
+            </div>
+            <!-- Navigation buttons -->
+            <div class="buttons">
+                <a href="{% url 'habit_list' %}" class="edit-link">Settings</a>
+                <a href="{% url 'export_csv' %}" class="export-button">Export to CSV</a>
+                <a href="{% url 'export_pdf' %}" class="export-button">Export to PDF</a>
+                <a href="{% url 'logout' %}" class="logout-button">Log Out</a>
+            </div>
+        </div>
+        <!-- =====================================
+             Main content section
+             ===================================== -->
+        <div class="content">
+            <!-- Left panel for habit selection and month navigation -->
+            <div class="left-panel">
+                <span class="select-habit-label">Select a habit:</span>
+                <ul class="habit-list" id="habit-list">
+                    {% for habit in habits %}
+                    <li class="{% if habit.id == selected_habit.id %}selected-habit{% endif %}" data-habit-id="{{ habit.id }}" onclick="selectHabit(this);">
+                        {{ habit.name }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                <!-- Month navigation form -->
+                <form method="POST" class="month-form" id="month_form">
+                    {% csrf_token %}
+                    <input type="hidden" name="habit_id" id="month_habit_id" value="{{ selected_habit.id }}">
+                    <input type="hidden" name="selected_date" id="month_selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+                    <input type="hidden" name="selected_month" id="month_selected_month" value="{{ selected_month }}">
+                    <button type="button" id="prev_month" onclick="changeMonth(-1)">&#9664;</button>
+                    <input type="month" id="month" name="selected_month" value="{{ selected_month }}" onchange="updateMonthFormAndSubmit()">
+                    <button type="button" id="next_month" onclick="changeMonth(1)">&#9654;</button>
+                    <button type="button" id="current_month" class="today-button" onclick="goToCurrentMonth()">Current Month</button>
+                </form>
+            </div>
+            <!-- Center panel with image -->
+            <div class="center-panel">
+                <img src="{% static 'images/joga.png' %}" alt="from: pixabay.com" class="center-image">
+            </div>
+            <!-- Right panel for daily completion form -->
+            <div class="right-panel">
+                <form method="POST" id="date_form">
+                    {% csrf_token %}
+                    <input type="hidden" name="habit_id" id="date_habit_id" value="{{ selected_habit.id }}">
+                    <input type="hidden" name="selected_month" id="date_selected_month" value="{{ selected_month }}">
+                    <input type="hidden" name="selected_date" id="date_selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+                  <br><br><br>
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" name="selected_date" value="{{ selected_date|date:'Y-m-d' }}" onchange="updateDateFormAndSubmit()">
+                    </div>
+                    <div class="form-group">
+                        <label for="completion_count">Completion:</label>
+                        <input type="number" id="completion_count" name="completion_count" value="{% if selected_habit and completions %}{{ completions.first.completion_count }}{% endif %}">
+                    </div>
+                    <div class="form-group">
+                        <label for="daily_goal">Daily goal:</label>
+                        <span id="daily_goal">{{ selected_habit.goal }}</span>
+                    </div>
+                    <button type="submit" class="save-button">Save</button>
+                </form>
+                <img src="{% static 'images/zebra.png' %}" alt="Zebra" class="zebra-image">
+            </div>
+        </div>
+        <!-- =====================================
+             Bottom panel for the habit chart
+             ===================================== -->
+        <div class="bottom-panel">
+            <div class="chart-container">
+                <canvas id="habitChart"></canvas>
+            </div>
+        </div>
+    </div>
+<script>
+    // =====================================
+    // JavaScript for handling the habit chart
+    // =====================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('habitChart').getContext('2d');
+        const completionData = {{ completions|safe }};
+        const labels = Array.from({ length: completionData.length }, (_, i) => i + 1);
+        const data = completionData.map(item => item.count);
+        const maxValue = Math.max(...data, 200);
+
+        const dailyGoal = {{ selected_habit.goal }};
+
+        const habitChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '{{ selected_habit.name }}',
+                    data: data,
+                    backgroundColor: '#00cc99',
+                    borderColor: '#00FF00',
+                    borderWidth: 0.75
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: [
+                            {
+                                type: 'line',
+                                mode: 'horizontal',
+                                scaleID: 'y-axis-0',
+                                value: dailyGoal,
+                                borderColor: 'yellow',
+                                borderWidth: 2,
+                                label: {
+                                    enabled: true,
+                                    content: 'Daily Goal'
+                                }
+                            }
+                        ]
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: maxValue,
+                        ticks: {
+                            color: '#ffffff',
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            callback: function(value, index, values) {
+                                return index + 1;
+                            }
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Restore selected habit on page load
+        const selectedHabitId = localStorage.getItem('selectedHabitId');
+        if (selectedHabitId) {
+            const selectedHabitElement = document.querySelector(`[data-habit-id='${selectedHabitId}']`);
+            if (selectedHabitElement) {
+                selectedHabitElement.classList.add('selected-habit');
+                document.getElementById('month_habit_id').value = selectedHabitId;
+                document.getElementById('date_habit_id').value = selectedHabitId;
+            }
+        }
+    });
+
+    // =====================================
+    // Function to update month form and submit
+    // =====================================
+    function updateMonthFormAndSubmit() {
+        document.getElementById('month_habit_id').value = document.querySelector('.selected-habit').dataset.habitId;
+        document.getElementById('month_selected_date').value = document.getElementById('date_selected_date').value;
+        document.getElementById('month_selected_month').value = document.getElementById('month').value;
+        document.getElementById('month_form').submit();
+    }
+
+    // =====================================
+    // Function to update date form and submit
+    // =====================================
+    function updateDateFormAndSubmit() {
+        document.getElementById('date_habit_id').value = document.querySelector('.selected-habit').dataset.habitId;
+        document.getElementById('date_selected_month').value = document.getElementById('month').value;
+        document.getElementById('date_selected_date').value = document.getElementById('date').value;
+        document.getElementById('date_form').submit();
+    }
+
+    // =====================================
+    // Function to select a habit and update forms
+    // =====================================
+    function selectHabit(element) {
+        event.preventDefault();
+
+        var items = document.querySelectorAll('.habit-list li');
+        items.forEach(function(item) {
+            item.classList.remove('selected-habit');
+        });
+
+        element.classList.add('selected-habit');
+
+        const habitId = element.dataset.habitId;
+        document.getElementById('month_habit_id').value = habitId;
+        document.getElementById('date_habit_id').value = habitId;
+
+        document.getElementById('month_selected_date').value = document.getElementById('date_selected_date').value;
+        document.getElementById('month_selected_month').value = document.getElementById('month').value;
+
+        localStorage.setItem('selectedHabitId', habitId); // Store selected habit ID
+
+        document.getElementById('month_form').submit();
+    }
+
+    // =====================================
+    // Function to change the month and update the form
+    // =====================================
+    function changeMonth(direction) {
+        const monthInput = document.getElementById('month');
+        let currentDate = new Date(monthInput.value + '-01');
+        currentDate.setMonth(currentDate.getMonth() + direction);
+        
+        const newMonth = currentDate.toISOString().slice(0, 7); // Format to YYYY-MM
+        monthInput.value = newMonth;
+        
+        updateMonthFormAndSubmit();
+    }
+
+    // =====================================
+    // Function to go to the current month
+    // =====================================
+    function goToCurrentMonth() {
+        const today = new Date();
+        const currentMonth = today.toISOString().slice(0, 7); // Format to YYYY-MM
+        document.getElementById('month').value = currentMonth;
+        
+        updateMonthFormAndSubmit();
+    }
+
+    // =====================================
+    // Event listeners for month and date changes
+    // =====================================
+    document.getElementById('month').addEventListener('change', function() {
+        updateMonthFormAndSubmit();
+    });
+
+    document.getElementById('date').addEventListener('change', function() {
+        updateDateFormAndSubmit();
+    });
+</script>
+</body>
+</html>
