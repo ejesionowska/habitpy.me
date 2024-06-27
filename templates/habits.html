@@ -1,0 +1,264 @@
+{% load static %}
+<!-- =====================================
+     Loading necessary static files and setting up the HTML document
+     ===================================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Setting the character encoding for the document -->
+    <meta charset="UTF-8">
+    <!-- Setting the title of the document -->
+    <title>Your Habits</title>
+    <!-- Linking to CSS files -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/habits.css' %}">    
+    <!-- Including jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Including jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Including jQuery UI library -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+    <!-- =====================================
+         Main container for the habits page
+         ===================================== -->
+    <div class="container">
+        <!-- =====================================
+             Header section with logo and buttons
+             ===================================== -->
+        <div class="header">
+            <!-- Logo section -->
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="habitpy.me">
+            </div>
+            <!-- Buttons for actions -->
+            <div class="buttons">
+                <button id="addHabitButton">Add a Habit</button>
+                <button onclick="document.getElementById('editModal').style.display='block'">Modify a Habit</button>
+                <button style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='dimgray'" onclick="document.getElementById('deleteModal').style.display='block'">Delete a Habit</button>
+                <button onclick="document.getElementById('changePasswordModal').style.display='block'">Change Password</button>
+                <a href="{% url 'dashboard' %}" class="button-link">Main Dashboard</a>
+                <a href="{% url 'logout' %}" class="button-link">Log Out</a>
+            </div>
+        </div>
+        <!-- Header title -->
+        <div class="header-title">
+            <h1>Your Habits</h1>
+        </div>
+        <!-- =====================================
+             Main content section
+             ===================================== -->
+        <div class="content">
+            <!-- Table container for displaying habits -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Habit</th>
+                            <th>Daily Goal</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for habit in habits %}
+                        <tr>
+                            <td class="text-left">{{ habit.name }}</td>
+                            <td class="text-center">{{ habit.goal }}</td>
+                            <td class="text-left">{{ habit.unit }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Image at the bottom of the content -->
+            <img src="{% static 'images/sports.png' %}" alt="Sports" class="footer-image" style="width: 637px; height: auto;">
+        </div>
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    <br>
+        <img src="{% static 'images/elephant.png' %}" alt="Elephant" style="width: 20%; height: auto;">
+    </div>
+
+    <!-- =====================================
+         Modals for various actions
+         ===================================== -->
+
+    <!-- Add Habit Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('addModal').style.display='none'">&times;</span>
+            <h2>Add a Habit</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_name">Name:</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label for="id_goal">Goal:</label>
+                    {{ form.goal }}
+                </div>
+                <div class="form-group">
+                    <label for="id_unit">Unit:</label>
+                    {{ form.unit }}
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="add_habit">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Habit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
+            <h2>Select a Habit to Edit</h2>
+            <ul>
+                {% for habit in habits %}
+                <li onclick="closeModalAndOpenEditForm({{ habit.id }}, '{{ habit.name }}', {{ habit.goal }}, '{{ habit.unit }}')">{{ habit.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Edit Habit Form Modal -->
+    <div id="editFormModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('editFormModal').style.display='none'">&times;</span>
+            <h2>Modify a Habit</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="habit_id" id="editHabitId">
+                <div class="form-group">
+                    <label for="editHabitName">Name:</label>
+                    <input type="text" name="name" id="editHabitName" maxlength="18">
+                </div>
+                <div class="form-group">
+                    <label for="editHabitGoal">Goal:</label>
+                    <input type="number" name="goal" id="editHabitGoal" max="999999">
+                </div>
+                <div class="form-group">
+                    <label for="editHabitUnit">Unit:</label>
+                    <input type="text" name="unit" id="editHabitUnit">
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="edit_habit">Modify</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Habit Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('deleteModal').style.display='none'">&times;</span>
+            <h2>Select a Habit to Delete</h2>
+            <ul>
+                {% for habit in habits %}
+                <li onclick="closeModalAndOpenDeleteForm({{ habit.id }}, '{{ habit.name }}')">{{ habit.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Delete Habit Form Modal -->
+    <div id="deleteFormModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('deleteFormModal').style.display='none'">&times;</span>
+            <h2>Delete a Habit</h2>
+            <p id="deleteHabitName"></p>
+            <p>Are you sure you want to delete this habit?</p>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="habit_id" id="deleteHabitId">
+                <div class="button-container">
+                    <button type="button" style="background-color: dimgray; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #333333; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#333333';" onmouseout="this.style.backgroundColor='dimgray';" onclick="document.getElementById('deleteFormModal').style.display='none'">No</button>
+                    <button type="submit" name="delete_habit">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Maximum Habits Reached -->
+    <div id="maxHabitsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('maxHabitsModal').style.display='none'">&times;</span>
+            <h2>Maximum Habits Reached</h2>
+            <p>You're already working on the maximum number of habits.</p>
+            <div class="button-container">
+                <button type="button" class="button-link" style="background-color: #006699; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; border: none; font-size: 14px; font-weight: bold; box-shadow: 0 4px #004466; transition: all 0.2s ease; cursor: pointer; margin: 0 2px;" onmouseover="this.style.backgroundColor='#004466';" onmouseout="this.style.backgroundColor='#006699';" onclick="document.getElementById('maxHabitsModal').style.display='none'">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Changing Password -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('changePasswordModal').style.display='none'">&times;</span>
+            <h2>Change Password</h2>
+            <form method="POST" action="{% url 'change_password' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="old_password">Old Password:</label>
+                    <input type="password" name="old_password" id="old_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password1">New Password:</label>
+                    <input type="password" name="new_password1" id="new_password1" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password2">Confirm New Password:</label>
+                    <input type="password" name="new_password2" id="new_password2" required>
+                </div>
+                <div class="button-container">
+                    <button type="submit" name="change_password">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================
+         JavaScript for handling various actions
+         ===================================== -->
+    <script>
+        // Event listener for the add habit button
+        document.getElementById('addHabitButton').addEventListener('click', function() {
+            const habitsCount = {{ habits.count }};
+            if (habitsCount >= 6) {
+                document.getElementById('maxHabitsModal').style.display = 'block';
+            } else {
+                document.getElementById('addModal').style.display = 'block';
+            }
+        });
+
+        // Functions to handle closing modals and opening forms
+        function closeModalAndOpenEditForm(id, name, goal, unit) {
+            document.getElementById('editModal').style.display = 'none';
+            openEditForm(id, name, goal, unit);
+        }
+
+        function closeModalAndOpenDeleteForm(id, name) {
+            document.getElementById('deleteModal').style.display = 'none';
+            openDeleteForm(id, name);
+        }
+
+        // Functions to open edit and delete forms with the selected habit's data
+        function openEditForm(id, name, goal, unit) {
+            document.getElementById('editHabitId').value = id;
+            document.getElementById('editHabitName').value = name;
+            document.getElementById('editHabitGoal').value = goal;
+            document.getElementById('editHabitUnit').value = unit;
+            document.getElementById('editFormModal').style.display = 'block';
+        }
+
+        function openDeleteForm(id, name) {
+            document.getElementById('deleteHabitId').value = id;
+            document.getElementById('deleteHabitName').innerText = name;
+            document.getElementById('deleteFormModal').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
