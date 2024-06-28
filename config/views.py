@@ -6,15 +6,22 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Habit, Completion
 from .forms import HabitForm, CompletionForm
-from datetime import datetime, timedelta
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
+from datetime import datetime, date, timedelta
+from django.contrib.auth import login, logout
 from .forms import SignUpForm, LoginForm
 from django.utils.dateformat import DateFormat
-from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from django.contrib.auth.models import User
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect
+from config.auth_backends import EmailOrUsernameModelBackend
+from django.contrib import messages
+
 
 
 # ==============================================================
@@ -42,7 +49,9 @@ def habit_list(request):
                     habit.save()
                     return redirect('habit_list')
             else:
-                return render(request, 'habits.html', {'habits': habits, 'message': "You're already working on the maximum number of habits."})
+                messages.error(request, "You're already working on the maximum number of habits.")
+            return redirect('habit_list')
+
         elif 'edit_habit' in request.POST:
             habit_id = request.POST.get('habit_id')
             habit = Habit.objects.get(id=habit_id)
@@ -67,14 +76,14 @@ def dashboard(request):
     user = request.user
     habits = Habit.objects.filter(user=user)
     selected_habit = habits.first() if habits.exists() else None
-    selected_date = datetime.now().date()
+    selected_date = date.today()
     selected_month = selected_date.strftime('%Y-%m')
     completions = []
 
     if request.method == 'POST':
-        if 'selected_date' in request.POST and request.POST.get('selected_date'):
+        if request.POST.get('selected_date'):
             selected_date = datetime.strptime(request.POST.get('selected_date'), '%Y-%m-%d').date()
-        if 'selected_month' in request.POST and request.POST.get('selected_month'):
+        if request.POST.get('selected_month'):
             selected_month = request.POST.get('selected_month')
         habit_id = request.POST.get('habit_id')
         if habit_id:
@@ -92,6 +101,7 @@ def dashboard(request):
                 habit=selected_habit, added=selected_date,
                 defaults={'completion_count': completion_count}
             )
+#            return redirect(f'/dashboard?habit_id={selected_habit.id}&selected_date={selected_date.strftime("%Y-%m-%d")}')
 
     if selected_habit:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m').date()
@@ -144,9 +154,6 @@ def export_csv(request):
 # Export habits data to PDF
 # ==============================================================
 def export_pdf(request):
-    from django.http import HttpResponse
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="habits.pdf"'
@@ -192,17 +199,46 @@ def signup_view(request):
 # ==============================================================
 # User login view
 # ==============================================================
+#def login_view(request):
+#    if request.method == 'POST':
+ #       form = LoginForm(data=request.POST)
+ #       if form.is_valid():
+  #          user = form.get_user()
+  #          login(request, user)
+  #          return redirect('dashboard')
+  #  else:
+  #      form = LoginForm()
+  #  return render(request, 'login.html', {'form': form})
+
+
+class EmailOrUsernameModelBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        if '@' in username:
+            kwargs = {'email': username}
+        else:
+            kwargs = {'username': username}
+        try:
+            user = User.objects.get(**kwargs)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            return None
+
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('dashboard')
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = EmailOrUsernameModelBackend().authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user, backend='config.auth_backends.EmailOrUsernameModelBackend')
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid login credentials')
     else:
-        form = LoginForm()
+        form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
-
 
 # ==============================================================
 # User logout view
