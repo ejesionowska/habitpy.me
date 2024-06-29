@@ -1,7 +1,4 @@
 {% load static %}
-<!-- =====================================
-     Loading necessary static files and setting up the HTML document
-     ===================================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,10 +8,22 @@
     <title>Your Habits</title>
     <!-- Linking to CSS files -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">  
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <!-- Including Chart.js library and annotation plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@0.5.7"></script>
+    <style>
+        /* =====================================
+           CSS for color selector
+           ===================================== */
+
+
+        .selected-habit {
+            background-color: blue; /* Default color */
+            color: white;
+            border: 1px solid white;
+        }
+    </style>
 </head>
 <body>
     <!-- =====================================
@@ -41,7 +50,9 @@
              Main content section
              ===================================== -->
         <div class="content">
-            <!-- Left panel for habit selection and month navigation -->
+            <!-- =====================================
+                 Left panel for habit selection and month navigation
+                 ===================================== -->
             <div class="left-panel">
                 <span class="select-habit-label">Select a habit:</span>
                 <ul class="habit-list" id="habit-list">
@@ -63,18 +74,21 @@
                     <button type="button" id="current_month" class="today-button" onclick="goToCurrentMonth()">Current Month</button>
                 </form>
             </div>
-            <!-- Center panel with image -->
+            <!-- =====================================
+                 Center panel with image
+                 ===================================== -->
             <div class="center-panel">
                 <img src="{% static 'images/joga.png' %}" alt="from: pixabay.com" class="center-image">
             </div>
-            <!-- Right panel for daily completion form -->
+            <!-- =====================================
+                 Right panel for daily completion form
+                 ===================================== -->
             <div class="right-panel">
                 <form method="POST" id="date_form">
                     {% csrf_token %}
                     <input type="hidden" name="habit_id" id="date_habit_id" value="{{ selected_habit.id }}">
                     <input type="hidden" name="selected_month" id="date_selected_month" value="{{ selected_month }}">
                     <input type="hidden" name="selected_date" id="date_selected_date" value="{{ selected_date|date:'Y-m-d' }}">
-                  <br><br><br>
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="selected_date" value="{{ selected_date|date:'Y-m-d' }}" onchange="updateDateFormAndSubmit()">
@@ -101,6 +115,11 @@
             </div>
         </div>
     </div>
+
+    <div class="color-selector">
+        <div class="color-option blue" onclick="changeSelectedHabitColor('blue')"></div>
+    </div>
+
 <script>
     // =====================================
     // JavaScript for handling the habit chart
@@ -111,9 +130,7 @@
         const labels = Array.from({ length: completionData.length }, (_, i) => i + 1);
         const data = completionData.map(item => item.count);
         const maxValue = Math.max(...data, 200);
-
         const dailyGoal = {{ selected_habit.goal }};
-
         const habitChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -175,17 +192,28 @@
             }
         });
 
+        // =====================================
         // Restore selected habit on page load
+        // =====================================
         const selectedHabitId = localStorage.getItem('selectedHabitId');
         if (selectedHabitId) {
             const selectedHabitElement = document.querySelector(`[data-habit-id='${selectedHabitId}']`);
             if (selectedHabitElement) {
                 selectedHabitElement.classList.add('selected-habit');
+                selectedHabitElement.style.background = '#006699';
+                selectedHabitElement.style.color = 'white';
+                selectedHabitElement.style.boxShadow = '0 4px 0 0 #004466';
+                selectedHabitElement.style.border = '1px solid #006699';
+                selectedHabitElement.style.padding = '8px 12px';
+                selectedHabitElement.style.fontWeight = 'bold';
+                selectedHabitElement.style.transition = 'all 0.3s ease';
+                selectedHabitElement.style.lineHeight = '0.7';
                 document.getElementById('month_habit_id').value = selectedHabitId;
                 document.getElementById('date_habit_id').value = selectedHabitId;
             }
         }
     });
+
 
     // =====================================
     // Function to update month form and submit
@@ -211,24 +239,17 @@
     // Function to select a habit and update forms
     // =====================================
     function selectHabit(element) {
-        event.preventDefault();
-
         var items = document.querySelectorAll('.habit-list li');
         items.forEach(function(item) {
             item.classList.remove('selected-habit');
         });
-
         element.classList.add('selected-habit');
-
         const habitId = element.dataset.habitId;
         document.getElementById('month_habit_id').value = habitId;
         document.getElementById('date_habit_id').value = habitId;
-
         document.getElementById('month_selected_date').value = document.getElementById('date_selected_date').value;
         document.getElementById('month_selected_month').value = document.getElementById('month').value;
-
         localStorage.setItem('selectedHabitId', habitId); // Store selected habit ID
-
         document.getElementById('month_form').submit();
     }
 
@@ -239,10 +260,8 @@
         const monthInput = document.getElementById('month');
         let currentDate = new Date(monthInput.value + '-01');
         currentDate.setMonth(currentDate.getMonth() + direction);
-        
         const newMonth = currentDate.toISOString().slice(0, 7); // Format to YYYY-MM
         monthInput.value = newMonth;
-        
         updateMonthFormAndSubmit();
     }
 
@@ -253,8 +272,18 @@
         const today = new Date();
         const currentMonth = today.toISOString().slice(0, 7); // Format to YYYY-MM
         document.getElementById('month').value = currentMonth;
-        
         updateMonthFormAndSubmit();
+    }
+
+    // =====================================
+    // Function to change selected habit color
+    // =====================================
+    function changeSelectedHabitColor(color) {
+        const selectedHabitElement = document.querySelector('.selected-habit');
+        if (selectedHabitElement) {
+            selectedHabitElement.style.backgroundColor = color;
+            localStorage.setItem('selectedHabitColor', color); // Store selected habit color
+        }
     }
 
     // =====================================
