@@ -18,7 +18,6 @@ from reportlab.lib.pagesizes import letter
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
 from config.auth_backends import EmailOrUsernameModelBackend
 from django.contrib import messages
 
@@ -101,7 +100,7 @@ def dashboard(request):
                 habit=selected_habit, added=selected_date,
                 defaults={'completion_count': completion_count}
             )
-#            return redirect(f'/dashboard?habit_id={selected_habit.id}&selected_date={selected_date.strftime("%Y-%m-%d")}')
+
 
     if selected_habit:
         selected_month_date = datetime.strptime(selected_month, '%Y-%m').date()
@@ -126,7 +125,8 @@ def dashboard(request):
         'completions': completions,
         'completion_form': completion_form,
     }
-
+    # return redirect('dashboard', selected_habit_id=selected_habit.id, selected_date=selected_date.strftime('%Y-%m-%d'),
+    #                selected_month=selected_month)
     return render(request, 'dashboard.html', context)
 
 

@@ -83,8 +83,10 @@
             <!-- =====================================
                  Right panel for daily completion form
                  ===================================== -->
+        
             <div class="right-panel">
                 <form method="POST" id="date_form">
+                </br></br>
                     {% csrf_token %}
                     <input type="hidden" name="habit_id" id="date_habit_id" value="{{ selected_habit.id }}">
                     <input type="hidden" name="selected_month" id="date_selected_month" value="{{ selected_month }}">
